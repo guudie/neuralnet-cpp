@@ -1,0 +1,4 @@
+.vscode/
+
+# object files
+*.o
