@@ -2,3 +2,6 @@
 
 # object files
 *.o
+
+# binaries
+*.exe
