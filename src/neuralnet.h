@@ -1,5 +1,10 @@
+#ifndef NEURALNET_H
+#define NEURALNET_H
+
 #include <vector>
 #include <eigen3/Eigen/Core>
+#include <iostream>
+#include <stdio.h>
 
 
 template<typename activation>
@@ -11,15 +16,16 @@ private:
     std::vector<Eigen::VectorXd*> errors;           // dE/dn where E is cost, n is a neuron
     std::vector<Eigen::VectorXd*> biases;
     Eigen::VectorXd* output;
-    bool validIn;
+
+    bool validOut;
 
 
 public:
-    neuralnet() : validIn(false) {};
+    neuralnet() : validOut(false), output(NULL) {};
     ~neuralnet() {
         cleanWeights();
         cleanLayers();
-        cleanOutput();
+        //cleanOutput();    dont need this
         cleanErrors();
         cleanBiases();
     }
@@ -52,6 +58,13 @@ public:
             delete output;
     }
 
+    const Eigen::VectorXd& getOutput() {
+        return *output;
+    }
+
+    const std::vector<Eigen::MatrixXd*>& getWeights() {
+        return weights;
+    }
     
     void addLayer(int _size) {
         if(_size <= 0)
@@ -60,17 +73,13 @@ public:
         layers.push_back(newLayer);
     }
 
-    void addInput(int _size) {
-        addLayer(_size);
-        if(layers.size())
-            validIn = true;
-    }
-
     void addOutput(int _size) {
         if(_size <= 0)
             return;
         cleanOutput();
         output = new Eigen::VectorXd(_size);
+        layers.push_back(output);
+        validOut = true;
     }
 
     void initWeights() {
@@ -78,27 +87,32 @@ public:
         if(!n)
             return;
         
-        // form weight matrices between input and first hidden layer
-        // and between hidden layers
+        // form weight matrices and biases between hidden layers
         for(int i = 0; i < n-1; i++) {
             Eigen::MatrixXd* newWeight = new Eigen::MatrixXd(layers[i+1]->size(), layers[i]->size());
             newWeight->setZero();
+            // newWeight->array() = 1;
             weights.push_back(newWeight);
-        }
 
-        Eigen::MatrixXd* lastW = new Eigen::MatrixXd(output->size(), layers[n-1]->size());
-        lastW->setZero();
-        weights.push_back(lastW);
+            Eigen::VectorXd* newBias = new Eigen::VectorXd(layers[i+1]->size());
+            newBias->setZero();
+            // newBias->array() = 2;
+            biases.push_back(newBias);
+        }
     }
 
     void feedforward(const Eigen::VectorXd& input) {
-        if(!validIn || !output)
+        if(!weights.size() || input.size() != layers[0]->size())
             return;
         (*layers[0]) = input;
 
         int n = weights.size();
         for(int i = 0; i < n; i++) {
-            (*layers[i+1]) = (*weights[i]) * (*layers[i]);
+            (*layers[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i]);
+            for(int j = 0; j < layers[i+1]->size(); j++)
+                layers[i+1]->coeffRef(j) = activation::f(layers[i+1]->coeff(j));
         }
     }
 };
+
+#endif

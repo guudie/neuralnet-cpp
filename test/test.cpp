@@ -1,14 +1,17 @@
 #include "neuralnet.h"
+#include "act_func.h"
 #include <iostream>
-using namespace std;
-
-
 
 int main() {
-    Eigen::MatrixXd* lastW = new Eigen::MatrixXd(3, 2);
-    (*lastW).array() = 1;
-    Eigen::VectorXd next(2);
-    next.array() = 200;
-    Eigen::VectorXd o = (*lastW) * next;
-    std::cout << o;
+    neuralnet<linear> net;
+    Eigen::VectorXd sampleInput(3);
+    sampleInput << 1, 2, 3;
+
+    net.addLayer(3);
+    net.addOutput(1);
+
+    net.initWeights();
+    net.feedforward(sampleInput);
+
+    std::cout << net.getOutput();
 }
