@@ -20,21 +20,28 @@ int main() {
 
     std::vector<Eigen::VectorXd> X;
     std::vector<Eigen::VectorXd> y;
-    int n;
 
-    fin >> n;
+    int n, ins, outs;
+    fin >> n >> ins >> outs;
     string tmp;
     fin.ignore();
     getline(fin, tmp);
     int place;
-    double x, x2, x3, x4, y_i;
+    double* x_i = new double[ins];
+    double* y_i = new double[outs];
     for(int i = 0; i < n; i++) {
-        fin >> place >> x >> x2 >> x3 >> x4 >> y_i;
-        // cout << x << x2 << x3 << x4 << "\n";
         Eigen::VectorXd tmp_x(4);
-        tmp_x << x, x2, x3, x4;
         Eigen::VectorXd tmp_y(1);
-        tmp_y << y_i;
+
+        fin >> place;
+        for(int i = 0; i < ins; i++) {
+            fin >> x_i[i];
+            tmp_x.coeffRef(i) = x_i[i];
+        }
+        for(int i = 0; i < outs; i++) {
+            fin >> y_i[i];
+            tmp_y.coeffRef(i) = y_i[i];
+        }
 
         X.push_back(tmp_x);
         y.push_back(tmp_y);

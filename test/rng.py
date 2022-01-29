@@ -25,4 +25,5 @@ data["x3"] = x3
 data["x4"] = x4
 data["y"] = y
 print(len(data), file=fout)
+print(4, 1, file=fout)
 print(data, file=fout)
