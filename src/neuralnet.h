@@ -18,7 +18,6 @@ private:
     std::vector<Eigen::VectorXd*> errors;           // dE/dn where E is cost, n is a neuron
 
     std::vector<Eigen::VectorXd*> biases;
-    std::vector<Eigen::VectorXd*> biasErrors;
     std::vector<Eigen::VectorXd*> biasGradient;
 
     std::vector<Eigen::VectorXd*> train_in;
@@ -32,17 +31,15 @@ private:
 public:
     neuralnet() : validOut(false), output(NULL) {};
     ~neuralnet() {
-        // cleanWeights();
-        // cleanGradient();
-        // cleanLayers();
-        // //cleanOutput();    dont need this
-        // cleanErrors();
-        // cleanBiases();
-        // cleanBiasErrors();
-        // cleanBiasGradient();
-        // cleanTrain_in();
-        // cleanTrain_out();
-        // cleanOutput();
+        cleanWeights();
+        cleanGradient();
+        cleanLayers();
+        // cleanOutput();    dont need this
+        cleanErrors();
+        cleanBiases();
+        cleanBiasGradient();
+        cleanTrain_in();
+        cleanTrain_out();
     }
 
     //
@@ -78,12 +75,6 @@ public:
                 delete it;
     }
     //
-    void cleanBiasErrors() {
-        for(auto it : biasErrors)
-            if(it)
-                delete it;
-    }
-    //
     void cleanBiasGradient() {
         for(auto it : biasGradient)
             if(it)
@@ -103,8 +94,11 @@ public:
     }
     //
     void cleanOutput() {
-        if(output)
+        if(output) {
             delete output;
+            validOut = false;
+            output = NULL;
+        }
     }
 
     const Eigen::VectorXd& getOutput() {
@@ -128,7 +122,7 @@ public:
     }
     
     void addLayer(int _size) {
-        if(_size <= 0)
+        if(_size <= 0 || validOut)
             return;
         Eigen::VectorXd* newLayer = new Eigen::VectorXd(_size);
         layers.push_back(newLayer);
@@ -137,6 +131,8 @@ public:
     void addOutput(int _size) {
         if(_size <= 0)
             return;
+        if(validOut)
+            layers.pop_back();
         cleanOutput();
         output = new Eigen::VectorXd(_size);
         layers.push_back(output);
@@ -144,21 +140,22 @@ public:
     }
 
     void randomize() {
-        std::default_random_engine generator;
-        std::uniform_real_distribution<double> distribution(-1.0,1.0);
+        std::random_device r;
+        std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
+        std::mt19937 eng(seed);
+        std::uniform_real_distribution<double> urd(-1, 1);
+        // std::cout << weights[0]->cols() << "; " << weights[0]->rows() << "\n";
         for(auto it : weights) {
-            for(int i = 0; i < it->cols(); i++)
-                for(int j = 0; j < it->rows(); j++) {
-                    double number = distribution(generator);
-                    it->coeffRef(i, j) = number;
+            for(int i = 0; i < it->rows(); i++)
+                for(int j = 0; j < it->cols(); j++) {
+                    it->coeffRef(i, j) = urd(eng);
                 }
         }
         for(auto it : biases) {
             if(it)
-                for(int i = 0; i < it->cols(); i++)
-                    for(int j = 0; j < it->rows(); j++) {
-                        double number = distribution(generator);
-                        it->coeffRef(i, j) = number;
+                for(int i = 0; i < it->rows(); i++)
+                    for(int j = 0; j < it->cols(); j++) {
+                        it->coeffRef(i, j) = urd(eng);
                     }
         }
     }
@@ -182,7 +179,6 @@ public:
         
         errors.push_back(NULL);
         biases.push_back(NULL);
-        biasErrors.push_back(NULL);
         biasGradient.push_back(NULL);
         // form weight matrices and biases between hidden layers
         for(int i = 0; i < n-1; i++) {
@@ -200,11 +196,6 @@ public:
             Eigen::VectorXd* newBias = new Eigen::VectorXd(layers[i+1]->size());
             newBias->setZero();
             biases.push_back(newBias);
-
-            // bias errors
-            Eigen::VectorXd* newBiasErr = new Eigen::VectorXd(layers[i+1]->size());
-            newBiasErr->setZero();
-            biasErrors.push_back(newBiasErr);
 
             // bias gradient
             Eigen::VectorXd* newBiasGrad = new Eigen::VectorXd(layers[i+1]->size());
@@ -276,6 +267,8 @@ public:
     }
 
     void fit(double rate, int epoch, int batch_size = -1) {
+        if(layers.size() < 2)
+            return;
         if(batch_size == -1)
             batch_size = train_in.size();
         // std::cout << "fit---------\n";

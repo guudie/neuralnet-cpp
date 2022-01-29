@@ -4,7 +4,7 @@ import pandas as pd
 
 x = []
 for i in range(0, 200):
-    x.append(random.uniform(-3, 3))
+    x.append(random.uniform(-4, 4))
 
 x2 = np.multiply(x, x)
 x3 = np.multiply(x2, x)

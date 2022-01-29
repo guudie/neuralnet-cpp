@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     fstream fin("dataset.txt", ios::in);
     fstream fout("weights.txt", ios::out);
-    fout.precision(20);
+    fout.precision(10);
     neuralnet<linear> net;
 
     net.addLayer(4);
@@ -50,8 +50,9 @@ int main() {
     // cout << "learning rate: ";  cin >> rate;
     // cout << "epoch: ";          cin >> epoch;
     // 0.001 5000
+    // cout << (*(net.getWeights()[0])) << "\n";
 
-    net.fit(0.003, 5000);
+    net.fit(0.00005, 5000);
     cout << "yea------\n";
 
     for(int i = 0; i < net.getWeights().size(); i++) {
@@ -61,6 +62,6 @@ int main() {
     for(int i = 1; i < net.getBiases().size(); i++) {
         fout << (*(net.getBiases()[i])) << "\n\n";
     }
-    cout << (*net.getLayers()[1]) << "\n";
-    cout << net.getOutput() << "\n";
+    // cout << (*net.getLayers()[1]) << "\n";
+    // cout << net.getOutput() << "\n";
 }
