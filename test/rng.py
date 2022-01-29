@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 x = []
-for i in range(0, 100):
+for i in range(0, 200):
     x.append(random.uniform(-3, 3))
 
 x2 = np.multiply(x, x)

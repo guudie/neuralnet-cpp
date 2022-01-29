@@ -4,6 +4,7 @@
 #include <vector>
 #include <eigen3/Eigen/Core>
 #include <iostream>
+#include <random>
 
 
 template<typename activation>
@@ -142,6 +143,26 @@ public:
         validOut = true;
     }
 
+    void randomize() {
+        std::default_random_engine generator;
+        std::uniform_real_distribution<double> distribution(-1.0,1.0);
+        for(auto it : weights) {
+            for(int i = 0; i < it->cols(); i++)
+                for(int j = 0; j < it->rows(); j++) {
+                    double number = distribution(generator);
+                    it->coeffRef(i, j) = number;
+                }
+        }
+        for(auto it : biases) {
+            if(it)
+                for(int i = 0; i < it->cols(); i++)
+                    for(int j = 0; j < it->rows(); j++) {
+                        double number = distribution(generator);
+                        it->coeffRef(i, j) = number;
+                    }
+        }
+    }
+
     // X: all training input data
     // y: all training output
     void attach(const std::vector<Eigen::VectorXd>& X, const std::vector<Eigen::VectorXd>& y) {
@@ -195,6 +216,7 @@ public:
             newErr->setZero();
             errors.push_back(newErr);
         }
+        randomize();
     }
 
     void feedforward(const Eigen::VectorXd& input) {

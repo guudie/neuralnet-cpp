@@ -13,6 +13,7 @@ int main() {
     neuralnet<linear> net;
 
     net.addLayer(4);
+    net.addLayer(3);
     net.addOutput(1);
 
     net.initWeights();
@@ -23,8 +24,8 @@ int main() {
 
     fin >> n;
     string tmp;
-    fin >> tmp >> tmp >> tmp >> tmp >> tmp;
-    // fin.ignore();
+    fin.ignore();
+    getline(fin, tmp);
     int place;
     double x, x2, x3, x4, y_i;
     for(int i = 0; i < n; i++) {
@@ -44,22 +45,22 @@ int main() {
     // cout << (*net.getTrainX()[0]) << "\n";
 
     // net.feedforward(X[0]);
-    // cout << (*net.getLayers()[0]) << "\n";
     // cout << (*net.getWeights()[0]) << "\n";
-    // cout << net.getOutput() << "\n";
-    double rate, epoch;
-    cout << "learning rate: ";  cin >> rate;
-    cout << "epoch: ";          cin >> epoch;
-    // 0.001 50
+    // double rate, epoch;
+    // cout << "learning rate: ";  cin >> rate;
+    // cout << "epoch: ";          cin >> epoch;
+    // 0.001 5000
 
-    net.fit(rate, epoch);
+    net.fit(0.003, 5000);
     cout << "yea------\n";
 
     for(int i = 0; i < net.getWeights().size(); i++) {
-        fout << (*(net.getWeights()[i])) << "\n";
+        fout << (*(net.getWeights()[i])) << "\n\n";
     }
-    fout << "\n\n";
+    fout << "\n\n\n";
     for(int i = 1; i < net.getBiases().size(); i++) {
-        fout << (*(net.getBiases()[i])) << "\n";
+        fout << (*(net.getBiases()[i])) << "\n\n";
     }
+    cout << (*net.getLayers()[1]) << "\n";
+    cout << net.getOutput() << "\n";
 }
