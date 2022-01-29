@@ -31,17 +31,17 @@ private:
 public:
     neuralnet() : validOut(false), output(NULL) {};
     ~neuralnet() {
-        cleanWeights();
-        cleanGradient();
-        cleanLayers();
-        //cleanOutput();    dont need this
-        cleanErrors();
-        cleanBiases();
-        cleanBiasErrors();
-        cleanBiasGradient();
-        cleanTrain_in();
-        cleanTrain_out();
-        cleanOutput();
+        // cleanWeights();
+        // cleanGradient();
+        // cleanLayers();
+        // //cleanOutput();    dont need this
+        // cleanErrors();
+        // cleanBiases();
+        // cleanBiasErrors();
+        // cleanBiasGradient();
+        // cleanTrain_in();
+        // cleanTrain_out();
+        // cleanOutput();
     }
 
     //
@@ -112,6 +112,18 @@ public:
 
     const std::vector<Eigen::MatrixXd*>& getWeights() {
         return weights;
+    }
+
+    const std::vector<Eigen::VectorXd*>& getTrainX() {
+        return train_in;
+    }
+
+    const std::vector<Eigen::VectorXd*>& getLayers() {
+        return layers;
+    }
+
+    const std::vector<Eigen::VectorXd*>& getBiases() {
+        return biases;
     }
     
     void addLayer(int _size) {
@@ -186,6 +198,7 @@ public:
     }
 
     void feedforward(const Eigen::VectorXd& input) {
+        // std::cout << "feed-------\n";
         if(!weights.size() || input.size() != layers[0]->size())
             return;
         (*layers[0]) = input;
@@ -200,16 +213,18 @@ public:
 
     void clearGradient() {
         for(auto it : gradient)
-            it->Zero();
+            if(it)
+                it->setZero();
         for(auto it : biasGradient)
-            it->Zero();
+            if(it)
+                it->setZero();
     }
 
     void backprop(Eigen::VectorXd* const& y_i) {
         int L = layers.size() - 1;
 
         // calculate ∂E/∂ȳ_i
-        (*errors[L]) = ((*output) - (*y_i)).array() * 2;
+        (*errors[L]) = ((*output) - (*y_i)) * 2;
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
@@ -238,23 +253,27 @@ public:
         }
     }
 
-    void fit(double rate, int epoch, int batch_size = 0) {
+    void fit(double rate, int epoch, int batch_size = -1) {
+        if(batch_size == -1)
+            batch_size = train_in.size();
+        // std::cout << "fit---------\n";
         for(int i = 0; i < epoch; i++) {
             clearGradient();
+            // std::cout << "gradients cleared---------\n";
             for(int j = 0; j < batch_size; j++) {
                 feedforward(*train_in[j]);
                 backprop(train_out[j]);
             }
+            // std::cout << "gradient: " << *gradient[0] << "\n";
 
             for(int j = 0; j < gradient.size(); j++) {
-                (*gradient[j]) = gradient[j]->array() / batch_size * rate;
-                (*weights[j]) -= *gradient[j];
+                (*weights[j]) -= (*gradient[j]) * (rate / batch_size);
             }
             for(int j = 1; j < biasGradient.size(); j++) {
-                (*biasGradient[j]) = biasGradient[j]->array() / batch_size * rate;
-                (*biases[j]) -= *biasGradient[j];
+                (*biases[j]) -= (*biasGradient[j]) * (rate / batch_size);
             }
         }
+        // std::cout << "fitting done ----------\n";
     }
 };
 
