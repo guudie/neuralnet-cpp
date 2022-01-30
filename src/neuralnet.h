@@ -5,9 +5,10 @@
 #include <eigen3/Eigen/Core>
 #include <iostream>
 #include <random>
+#include "loss.h"
 
 
-template<typename activation>
+template<typename activation, typename loss>
 class neuralnet {
 private:
 
@@ -237,7 +238,7 @@ public:
         int L = layers.size() - 1;
 
         // calculate ∂E/∂ȳ_i
-        (*errors[L]) = ((*output) - (*y_i)) * 2;
+        (*errors[L]) = loss::diff(*output, *y_i);
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {

@@ -10,7 +10,7 @@ int main() {
     fstream fin("dataset.txt", ios::in);
     fstream fout("weights.txt", ios::out);
     fout.precision(10);
-    neuralnet<linear> net;
+    neuralnet<linear, sse> net;
 
     net.addLayer(4);
     net.addLayer(3);
@@ -59,7 +59,7 @@ int main() {
     // 0.001 5000
     // cout << (*(net.getWeights()[0])) << "\n";
 
-    net.fit(0.00005, 5000);
+    net.fit(0.0001, 10000);
     cout << "yea------\n";
 
     for(int i = 0; i < net.getWeights().size(); i++) {
