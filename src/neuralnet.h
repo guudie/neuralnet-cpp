@@ -234,11 +234,11 @@ public:
                 it->setZero();
     }
 
-    void backprop(Eigen::VectorXd* const& y_i) {
+    void backprop(Eigen::VectorXd* const& y_i, const int& batch_size) {
         int L = layers.size() - 1;
 
         // calculate ∂E/∂ȳ_i
-        (*errors[L]) = loss::diff(*output, *y_i);
+        (*errors[L]) = loss::diff(*output, *y_i, batch_size);
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
@@ -278,7 +278,7 @@ public:
             // std::cout << "gradients cleared---------\n";
             for(int j = 0; j < batch_size; j++) {
                 feedforward(*train_in[j]);
-                backprop(train_out[j]);
+                backprop(train_out[j], batch_size);
             }
             // std::cout << "gradient: " << *gradient[0] << "\n";
 
