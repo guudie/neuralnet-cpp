@@ -15,7 +15,7 @@ x4 = np.multiply(x3, x)
 #     y.append(15 * x3[i] + random.uniform(-5, 5))
 y = np.multiply(np.sin(x), 2)
 
-fout = open("./dump/dataset.txt", "w")
+fout = open("../dump/dataset.txt", "w")
 pd.set_option('display.float_format', lambda x: '%.10f' % x)
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 data = pd.DataFrame()
