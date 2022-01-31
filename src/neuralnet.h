@@ -1,11 +1,13 @@
 #ifndef NEURALNET_H
 #define NEURALNET_H
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 #include <vector>
 #include <eigen3/Eigen/Core>
-#include <iostream>
 #include <random>
-#include "loss.h"
 
 
 template<typename activation, typename loss>
@@ -144,7 +146,7 @@ public:
         std::random_device r;
         std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
         std::mt19937 eng(seed);
-        std::uniform_real_distribution<double> urd(-1, 1);
+        std::uniform_real_distribution<double> urd(-.5, .5);
         // std::cout << weights[0]->cols() << "; " << weights[0]->rows() << "\n";
         for(auto it : weights) {
             for(int i = 0; i < it->rows(); i++)

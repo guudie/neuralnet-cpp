@@ -1,5 +1,8 @@
+#define DEBUG
+
 #include "neuralnet.h"
 #include "act_func.h"
+#include "loss.h"
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -7,8 +10,8 @@
 using namespace std;
 
 int main() {
-    fstream fin("dataset.txt", ios::in);
-    fstream fout("weights.txt", ios::out);
+    fstream fin("../dump/dataset.txt", ios::in);
+    fstream fout("../dump/weights.txt", ios::out);
     fout.precision(10);
     neuralnet<linear, sse> net;
 

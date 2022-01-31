@@ -1,8 +1,10 @@
 #ifndef LOSS_H
 #define LOSS_H
 
+#ifndef NEURALNET_H
 #include <vector>
 #include <eigen3/Eigen/Core>
+#endif
 
 class sse {
 public:
