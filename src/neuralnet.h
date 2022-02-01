@@ -244,28 +244,38 @@ public:
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
-            double tmp = errors[L]->coeff(j) * activation::diff(layers[L]->coeff(j));
+            // multiply each error of the last layer with their respective activation
+            double tmp = errors[L]->coeff(j) * activation::diff(layers[L]->coeff(j));       // actually "out_activation" but will be fixed later
+            errors[L]->coeffRef(j) = tmp;
             biasGradient[L]->coeffRef(j) += tmp;
-            for(int k = 0; k < layers[L-1]->size(); k++) {
-                gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
-            }
+            // for(int k = 0; k < layers[L-1]->size(); k++) {
+            //     gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
+            // }
         }
+        *gradient[L-1] += (*errors[L]) * layers[L-1]->transpose();
 
         // calculate ∂E/∂a_i
         for(int l = L-1; l > 0; l--) {
+            *errors[l] = weights[l]->transpose() * (*errors[l+1]);
             for(int j = 0; j < errors[l]->size(); j++) {
-                errors[l]->coeffRef(j) = 0;
-                for(int i = 0; i < errors[l+1]->size(); i++) {
-                    double tmp = errors[l+1]->coeff(i) * activation::diff(layers[l+1]->coeff(i));
-                    errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
-                }
+                // errors[l]->coeffRef(j) = 0;
+                // for(int i = 0; i < errors[l+1]->size(); i++) {
+                //     double tmp = errors[l+1]->coeff(i) * activation::diff(layers[l+1]->coeff(i));
+                //     errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
+                // }
+
                 // for each u_jk that affects a_j
-                double tmp0 = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
-                biasGradient[l]->coeffRef(j) += tmp0;
-                for(int k = 0; k < layers[l-1]->size(); k++) {
-                    gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
-                }
+                // double tmp0 = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
+                // biasGradient[l]->coeffRef(j) += tmp0;
+                // for(int k = 0; k < layers[l-1]->size(); k++) {
+                //     gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
+                // }
+
+                double tmp = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
+                errors[l]->coeffRef(j) = tmp;
+                biasGradient[l]->coeffRef(j) += tmp;
             }
+            *gradient[l-1] += (*errors[l]) * layers[l-1]->transpose();
         }
     }
 
