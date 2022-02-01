@@ -148,6 +148,8 @@ public:
             return;
         if(validOut) {
             layers.pop_back();
+
+            delete terms[terms.size()-1];
             terms.pop_back();
         }
         cleanOutput();
