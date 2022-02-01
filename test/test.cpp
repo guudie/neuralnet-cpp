@@ -71,7 +71,7 @@ int main() {
     auto start = high_resolution_clock::now();
 #endif
 
-    net.fit(0.0003, 5000);
+    net.fit(0.00005, 10000);
     cout << "yea------\n";
 
 #ifdef DEBUG
