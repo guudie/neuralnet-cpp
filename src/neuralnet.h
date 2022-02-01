@@ -17,6 +17,7 @@ private:
     std::vector<Eigen::MatrixXd*> weights;          // matrices of weights between layers
     std::vector<Eigen::MatrixXd*> gradient;
 
+    std::vector<Eigen::VectorXd*> terms;            // linear term: W * a + b
     std::vector<Eigen::VectorXd*> layers;           // includes input layer and all hidden layers
     std::vector<Eigen::VectorXd*> errors;           // dE/dn where E is cost, n is a neuron
 
@@ -36,6 +37,7 @@ public:
     ~neuralnet() {
         cleanWeights();
         cleanGradient();
+        cleanTerms();
         cleanLayers();
         // cleanOutput();    dont need this
         cleanErrors();
@@ -56,6 +58,12 @@ public:
     //
     void cleanGradient() {
         for(auto it : gradient)
+            if(it)
+                delete it;
+    }
+    //
+    void cleanTerms() {
+        for(auto it : terms)
             if(it)
                 delete it;
     }
@@ -127,18 +135,31 @@ public:
     void addLayer(int _size) {
         if(_size <= 0 || validOut)
             return;
+        
         Eigen::VectorXd* newLayer = new Eigen::VectorXd(_size);
         layers.push_back(newLayer);
+
+        Eigen::VectorXd* newTerm = new Eigen::VectorXd(_size);
+        terms.push_back(newTerm);
     }
 
     void addOutput(int _size) {
         if(_size <= 0)
             return;
-        if(validOut)
+        if(validOut) {
             layers.pop_back();
+
+            delete terms[terms.size()-1];
+            terms.pop_back();
+        }
         cleanOutput();
+
         output = new Eigen::VectorXd(_size);
         layers.push_back(output);
+
+        Eigen::VectorXd* outTerm = new Eigen::VectorXd(_size);
+        terms.push_back(outTerm);
+
         validOut = true;
     }
 
@@ -217,13 +238,13 @@ public:
         // std::cout << "feed-------\n";
         if(!weights.size() || input.size() != layers[0]->size())
             return;
-        (*layers[0]) = input;
+        (*layers[0]) = (*terms[0]) = input;
 
         int n = weights.size();
         for(int i = 0; i < n; i++) {
-            (*layers[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
-            for(int j = 0; j < layers[i+1]->size(); j++)
-                layers[i+1]->coeffRef(j) = activation::f(layers[i+1]->coeff(j));
+            (*terms[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
+            for(int j = 0; j < terms[i+1]->size(); j++)
+                layers[i+1]->coeffRef(j) = activation::f(terms[i+1]->coeff(j));
         }
     }
 
@@ -244,7 +265,7 @@ public:
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
-            double tmp = errors[L]->coeff(j) * activation::diff(layers[L]->coeff(j));
+            double tmp = errors[L]->coeff(j) * activation::diff(terms[L]->coeff(j));
             biasGradient[L]->coeffRef(j) += tmp;
             for(int k = 0; k < layers[L-1]->size(); k++) {
                 gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
@@ -256,11 +277,11 @@ public:
             for(int j = 0; j < errors[l]->size(); j++) {
                 errors[l]->coeffRef(j) = 0;
                 for(int i = 0; i < errors[l+1]->size(); i++) {
-                    double tmp = errors[l+1]->coeff(i) * activation::diff(layers[l+1]->coeff(i));
+                    double tmp = errors[l+1]->coeff(i) * activation::diff(terms[l+1]->coeff(i));
                     errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
                 }
                 // for each u_jk that affects a_j
-                double tmp0 = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
+                double tmp0 = errors[l]->coeff(j) * activation::diff(terms[l]->coeff(j));
                 biasGradient[l]->coeffRef(j) += tmp0;
                 for(int k = 0; k < layers[l-1]->size(); k++) {
                     gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
