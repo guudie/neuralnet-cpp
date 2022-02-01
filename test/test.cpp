@@ -1,5 +1,10 @@
 #define DEBUG
 
+#ifdef DEBUG
+#include <chrono>
+using namespace std::chrono;
+#endif
+
 #include "neuralnet.h"
 #include "act_func.h"
 #include "loss.h"
@@ -15,7 +20,7 @@ int main() {
     fout.precision(10);
     neuralnet<linear, sse> net;
 
-    net.addLayer(1);
+    net.addLayer(3);
     net.addLayer(3);
     net.addOutput(1);
 
@@ -62,8 +67,19 @@ int main() {
     // 0.001 5000
     // cout << (*(net.getWeights()[0])) << "\n";
 
-    net.fit(0.005, 10000);
+#ifdef DEBUG
+    auto start = high_resolution_clock::now();
+#endif
+
+    net.fit(0.00005, 10000);
     cout << "yea------\n";
+
+#ifdef DEBUG
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    cout << "Execution time: " << duration.count() << "\n";
+#endif
 
     for(int i = 0; i < net.getWeights().size(); i++) {
         fout << (*(net.getWeights()[i])) << "\n\n";
