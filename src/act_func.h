@@ -33,4 +33,34 @@ public:
     }
 };
 
+class sigmoid {
+public:
+    sigmoid();
+    ~sigmoid();
+
+    static double f(double x) {
+        return 1 / (1 + exp(-x));
+    }
+
+    static double diff(double x) {
+        double tmp = f(x);
+        return tmp - tmp*tmp;
+    }
+};
+
+class fastmoid {
+public:
+    fastmoid();
+    ~fastmoid();
+
+    static double f(double x) {
+        return (x / (1 + abs(x)) + 1) / 2;
+    }
+
+    static double diff(double x) {
+        double tmp = 1 + abs(x);
+        return 1/tmp/tmp/2;
+    }
+};
+
 #endif
