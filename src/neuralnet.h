@@ -17,6 +17,7 @@ private:
     std::vector<Eigen::MatrixXd*> weights;          // matrices of weights between layers
     std::vector<Eigen::MatrixXd*> gradient;
 
+    std::vector<Eigen::VectorXd*> terms;            // linear term: W * a + b
     std::vector<Eigen::VectorXd*> layers;           // includes input layer and all hidden layers
     std::vector<Eigen::VectorXd*> errors;           // dE/dn where E is cost, n is a neuron
 
@@ -36,6 +37,7 @@ public:
     ~neuralnet() {
         cleanWeights();
         cleanGradient();
+        cleanTerms();
         cleanLayers();
         // cleanOutput();    dont need this
         cleanErrors();
@@ -56,6 +58,12 @@ public:
     //
     void cleanGradient() {
         for(auto it : gradient)
+            if(it)
+                delete it;
+    }
+    //
+    void cleanTerms() {
+        for(auto it : terms)
             if(it)
                 delete it;
     }
@@ -127,18 +135,29 @@ public:
     void addLayer(int _size) {
         if(_size <= 0 || validOut)
             return;
+        
         Eigen::VectorXd* newLayer = new Eigen::VectorXd(_size);
         layers.push_back(newLayer);
+
+        Eigen::VectorXd* newTerm = new Eigen::VectorXd(_size);
+        terms.push_back(newTerm);
     }
 
     void addOutput(int _size) {
         if(_size <= 0)
             return;
-        if(validOut)
+        if(validOut) {
             layers.pop_back();
+            terms.pop_back();
+        }
         cleanOutput();
+
         output = new Eigen::VectorXd(_size);
         layers.push_back(output);
+
+        Eigen::VectorXd* outTerm = new Eigen::VectorXd(_size);
+        terms.push_back(outTerm);
+
         validOut = true;
     }
 
@@ -217,13 +236,13 @@ public:
         // std::cout << "feed-------\n";
         if(!weights.size() || input.size() != layers[0]->size())
             return;
-        (*layers[0]) = input;
+        (*layers[0]) = (*terms[0]) = input;
 
         int n = weights.size();
         for(int i = 0; i < n; i++) {
-            (*layers[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
-            for(int j = 0; j < layers[i+1]->size(); j++)
-                layers[i+1]->coeffRef(j) = activation::f(layers[i+1]->coeff(j));
+            (*terms[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
+            for(int j = 0; j < terms[i+1]->size(); j++)
+                layers[i+1]->coeffRef(j) = activation::f(terms[i+1]->coeff(j));
         }
     }
 
@@ -242,36 +261,23 @@ public:
         // calculate ∂E/∂ȳ_i
         (*errors[L]) = loss::diff(*output, *y_i, batch_size);
 
-        // for each u_jk that affects a_j
+        // add an amount to gradient
         for(int j = 0; j < errors[L]->size(); j++) {
-            // multiply each error of the last layer with their respective activation
-            double tmp = errors[L]->coeff(j) * activation::diff(layers[L]->coeff(j));       // actually "out_activation" but will be fixed later
+            // multiply each error of the last layer with its respective activation derivative
+            double tmp = errors[L]->coeff(j) * activation::diff(terms[L]->coeff(j));       // should be "out_activation" but will be fixed later
             errors[L]->coeffRef(j) = tmp;
             biasGradient[L]->coeffRef(j) += tmp;
-            // for(int k = 0; k < layers[L-1]->size(); k++) {
-            //     gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
-            // }
         }
         *gradient[L-1] += (*errors[L]) * layers[L-1]->transpose();
 
-        // calculate ∂E/∂a_i
+        // compute gradients for the other layers
         for(int l = L-1; l > 0; l--) {
+            // calculate ∂E/∂a_i
             *errors[l] = weights[l]->transpose() * (*errors[l+1]);
+            // multiply each error of layer l with its respective activation derivative
+            // then add them to gradient
             for(int j = 0; j < errors[l]->size(); j++) {
-                // errors[l]->coeffRef(j) = 0;
-                // for(int i = 0; i < errors[l+1]->size(); i++) {
-                //     double tmp = errors[l+1]->coeff(i) * activation::diff(layers[l+1]->coeff(i));
-                //     errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
-                // }
-
-                // for each u_jk that affects a_j
-                // double tmp0 = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
-                // biasGradient[l]->coeffRef(j) += tmp0;
-                // for(int k = 0; k < layers[l-1]->size(); k++) {
-                //     gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
-                // }
-
-                double tmp = errors[l]->coeff(j) * activation::diff(layers[l]->coeff(j));
+                double tmp = errors[l]->coeff(j) * activation::diff(terms[l]->coeff(j));
                 errors[l]->coeffRef(j) = tmp;
                 biasGradient[l]->coeffRef(j) += tmp;
             }

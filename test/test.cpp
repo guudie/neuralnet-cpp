@@ -16,7 +16,7 @@ int main() {
     neuralnet<linear, sse> net;
 
     net.addLayer(1);
-    // net.addLayer(3);
+    net.addLayer(3);
     net.addOutput(1);
 
     net.initWeights();
@@ -62,7 +62,7 @@ int main() {
     // 0.001 5000
     // cout << (*(net.getWeights()[0])) << "\n";
 
-    net.fit(0.0001, 5000);
+    net.fit(0.01, 5000);
     cout << "yea------\n";
 
     for(int i = 0; i < net.getWeights().size(); i++) {
