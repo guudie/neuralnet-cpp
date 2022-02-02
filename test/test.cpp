@@ -76,9 +76,9 @@ int main() {
 
 #ifdef DEBUG
     auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
+    auto duration = duration_cast<milliseconds>(stop - start);
 
-    cout << "Execution time: " << duration.count() << "μs\n";
+    cout << "Execution time: " << duration.count() << " ms\n";
 #endif
 
     for(int i = 0; i < net.getWeights().size(); i++) {
