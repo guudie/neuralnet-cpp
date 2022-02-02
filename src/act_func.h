@@ -3,8 +3,8 @@
 
 class linear {
 public:
-    linear() {}
-    ~linear() {}
+    linear();
+    ~linear();
 
     static double f(double x) {
         return x;
@@ -17,8 +17,8 @@ public:
 
 class relu {
 public:
-    relu() {}
-    ~relu() {}
+    relu();
+    ~relu();
 
     static double f(double x) {
         if(x < 0)
@@ -61,6 +61,14 @@ public:
         double tmp = 1 + abs(x);
         return 1/tmp/tmp/2;
     }
+};
+
+class softmax {
+public:
+    softmax();
+    ~softmax();
+
+    
 };
 
 #endif

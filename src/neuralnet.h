@@ -10,7 +10,7 @@
 #include <random>
 
 
-template<typename activation, typename loss>
+template<typename activation, typename out_activation, typename loss>
 class neuralnet {
 private:
 

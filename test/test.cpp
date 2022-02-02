@@ -18,7 +18,7 @@ int main() {
     fstream fin("../dump/dataset.txt", ios::in);
     fstream fout("../dump/weights.txt", ios::out);
     fout.precision(10);
-    neuralnet<linear, sse> net;
+    neuralnet<linear, linear, sse> net;
 
     net.addLayer(3);
     net.addLayer(3);
@@ -78,7 +78,7 @@ int main() {
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
 
-    cout << "Execution time: " << duration.count() << "\n";
+    cout << "Execution time: " << duration.count() << "μs\n";
 #endif
 
     for(int i = 0; i < net.getWeights().size(); i++) {
