@@ -266,6 +266,7 @@ public:
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
             double tmp = errors[L]->coeff(j) * activation::diff(terms[L]->coeff(j));
+            errors[L]->coeffRef(j) = tmp;                       // optimized
             biasGradient[L]->coeffRef(j) += tmp;
             for(int k = 0; k < layers[L-1]->size(); k++) {
                 gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
@@ -277,11 +278,13 @@ public:
             for(int j = 0; j < errors[l]->size(); j++) {
                 errors[l]->coeffRef(j) = 0;
                 for(int i = 0; i < errors[l+1]->size(); i++) {
-                    double tmp = errors[l+1]->coeff(i) * activation::diff(terms[l+1]->coeff(i));
+                    // double tmp = errors[l+1]->coeff(i) * activation::diff(terms[l+1]->coeff(i));
+                    double tmp = errors[l+1]->coeff(i);         // optimized
                     errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
                 }
                 // for each u_jk that affects a_j
                 double tmp0 = errors[l]->coeff(j) * activation::diff(terms[l]->coeff(j));
+                errors[l]->coeffRef(j) = tmp0;                  // optimized
                 biasGradient[l]->coeffRef(j) += tmp0;
                 for(int k = 0; k < layers[l-1]->size(); k++) {
                     gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
