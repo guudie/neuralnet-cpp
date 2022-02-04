@@ -17,11 +17,15 @@ using namespace std;
 int main() {
     fstream fin("../dump/dataset.txt", ios::in);
     fstream fout("../dump/weights.txt", ios::out);
+    fstream eval("../dump/x_to_y.txt", ios::out);
     fout.precision(10);
+    eval.precision(10);
     neuralnet<linear, linear, sse> net;
 
-    net.addLayer(3);
-    net.addLayer(3);
+    net.addLayer(4);
+    net.addLayer(8);
+    net.addLayer(8);
+    net.addLayer(8);
     net.addOutput(1);
 
     net.initWeights();
@@ -71,8 +75,10 @@ int main() {
     auto start = high_resolution_clock::now();
 #endif
 
-    net.fit(0.00007, 10000);
+    // fit the dataset
+    net.fit(0.0001, 5000);
     cout << "yea------\n";
+    //////////////////
 
 #ifdef DEBUG
     auto stop = high_resolution_clock::now();
@@ -81,6 +87,7 @@ int main() {
     cout << "Execution time: " << duration.count() << " ms\n";
 #endif
 
+    // output the weights
     for(int i = 0; i < net.getWeights().size(); i++) {
         fout << (*(net.getWeights()[i])) << "\n\n";
     }
@@ -88,6 +95,20 @@ int main() {
     for(int i = 1; i < net.getBiases().size(); i++) {
         fout << (*(net.getBiases()[i])) << "\n\n";
     }
-    // cout << (*net.getLayers()[1]) << "\n";
-    // cout << net.getOutput() << "\n";
+    
+    // output the x to y mapping
+    eval << 161 << "\n";
+    for(double i = -4; i <= 4; i += 0.05) {
+        if(abs(i) < 10e-6)
+            i = 0;
+        Eigen::VectorXd eval_tmp(ins);
+        double p = i;
+        for(int j = 0; j < ins; j++) {
+            eval_tmp.coeffRef(j) = p;
+            p *= i;
+        }
+        net.feedforward(eval_tmp);
+
+        eval << i << " " << net.getOutput() << "\n";
+    }
 }
