@@ -242,7 +242,7 @@ public:
 
         int n = weights.size();
         for(int i = 0; i < n; i++) {
-            (*terms[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
+            terms[i+1]->noalias() = ((*weights[i]) * (*layers[i])).eval() + (*biases[i+1]);
             for(int j = 0; j < terms[i+1]->size(); j++)
                 layers[i+1]->coeffRef(j) = activation::f(terms[i+1]->coeff(j));
         }
@@ -270,12 +270,12 @@ public:
             errors[L]->coeffRef(j) = tmp;
             biasGradient[L]->coeffRef(j) += tmp;
         }
-        *gradient[L-1] += (*errors[L]) * layers[L-1]->transpose();
+        gradient[L-1]->noalias() += (*errors[L]) * layers[L-1]->transpose().eval();
 
         // compute gradients for the other layers
         for(int l = L-1; l > 0; l--) {
             // calculate ∂E/∂a_i
-            *errors[l] = weights[l]->transpose() * (*errors[l+1]);
+            errors[l]->noalias() = weights[l]->transpose().eval() * (*errors[l+1]);
             // multiply each error of layer l with its respective activation derivative
             // then add them to gradient
             for(int j = 0; j < errors[l]->size(); j++) {
@@ -283,7 +283,7 @@ public:
                 errors[l]->coeffRef(j) = tmp;
                 biasGradient[l]->coeffRef(j) += tmp;
             }
-            *gradient[l-1] += (*errors[l]) * layers[l-1]->transpose();
+            gradient[l-1]->noalias() += (*errors[l]) * layers[l-1]->transpose().eval();
         }
     }
 
@@ -303,10 +303,10 @@ public:
             // std::cout << "gradient: " << *gradient[0] << "\n";
 
             for(int j = 0; j < gradient.size(); j++) {
-                (*weights[j]) -= (*gradient[j]) * (rate / batch_size);
+                weights[j]->noalias() -= (*gradient[j]) * (rate / batch_size);
             }
             for(int j = 1; j < biasGradient.size(); j++) {
-                (*biases[j]) -= (*biasGradient[j]) * (rate / batch_size);
+                biases[j]->noalias() -= (*biasGradient[j]) * (rate / batch_size);
             }
         }
         // std::cout << "fitting done ----------\n";
