@@ -22,10 +22,10 @@ int main() {
     eval.precision(10);
     neuralnet<linear, linear, sse> net;
 
+    net.addLayer(2);
     net.addLayer(4);
-    net.addLayer(8);
-    net.addLayer(8);
-    net.addLayer(8);
+    net.addLayer(4);
+    net.addLayer(4);
     net.addOutput(1);
 
     net.initWeights();
@@ -76,7 +76,7 @@ int main() {
 #endif
 
     // fit the dataset
-    net.fit(0.0001, 5000);
+    net.fit(0.0001, 10000);
     cout << "yea------\n";
     //////////////////
 
@@ -97,8 +97,8 @@ int main() {
     }
     
     // output the x to y mapping
-    eval << 161 << "\n";
-    for(double i = -4; i <= 4; i += 0.05) {
+    eval << 201 << "\n";
+    for(double i = 0; i < 10.05; i += 0.05) {
         if(abs(i) < 10e-6)
             i = 0;
         Eigen::VectorXd eval_tmp(ins);

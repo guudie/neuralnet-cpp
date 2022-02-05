@@ -263,7 +263,7 @@ public:
         int L = layers.size() - 1;
 
         // calculate ∂E/∂ȳ_i
-        (*errors[L]) = loss::diff(*output, *y_i, batch_size);
+        *errors[L] = loss::diff(*output, *y_i, batch_size);
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
