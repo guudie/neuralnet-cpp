@@ -242,7 +242,9 @@ public:
 
         int n = weights.size();
         for(int i = 0; i < n; i++) {
-            (*terms[i+1]) = (*weights[i]) * (*layers[i]) + (*biases[i+1]);
+            // calculate the terms: t[l] = W[l-1] * a[l-1] + b[l]
+            terms[i+1]->noalias() = ((*weights[i]) * (*layers[i])).eval() + (*biases[i+1]);
+            // activate those terms: a[l] = act_func(t[l])
             for(int j = 0; j < terms[i+1]->size(); j++)
                 layers[i+1]->coeffRef(j) = activation::f(terms[i+1]->coeff(j));
         }
@@ -309,10 +311,10 @@ public:
             // std::cout << "gradient: " << *gradient[0] << "\n";
 
             for(int j = 0; j < gradient.size(); j++) {
-                (*weights[j]) -= (*gradient[j]) * (rate / batch_size);
+                weights[j]->noalias() -= (*gradient[j]) * (rate / batch_size);
             }
             for(int j = 1; j < biasGradient.size(); j++) {
-                (*biases[j]) -= (*biasGradient[j]) * (rate / batch_size);
+                biases[j]->noalias() -= (*biasGradient[j]) * (rate / batch_size);
             }
         }
         // std::cout << "fitting done ----------\n";
