@@ -301,6 +301,7 @@ public:
         if(batch_size == -1)
             batch_size = train_in.size();
         // std::cout << "fit---------\n";
+        double rb = rate / batch_size;
         for(int i = 0; i < epoch; i++) {
             clearGradient();
             // std::cout << "gradients cleared---------\n";
@@ -311,10 +312,10 @@ public:
             // std::cout << "gradient: " << *gradient[0] << "\n";
 
             for(int j = 0; j < gradient.size(); j++) {
-                weights[j]->noalias() -= (*gradient[j]) * (rate / batch_size);
+                weights[j]->noalias() -= (*gradient[j]) * rb;
             }
             for(int j = 1; j < biasGradient.size(); j++) {
-                biases[j]->noalias() -= (*biasGradient[j]) * (rate / batch_size);
+                biases[j]->noalias() -= (*biasGradient[j]) * rb;
             }
         }
         // std::cout << "fitting done ----------\n";
