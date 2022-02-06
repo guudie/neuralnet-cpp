@@ -6,11 +6,11 @@ public:
     linear();
     ~linear();
 
-    static double f(double x) {
+    static double f(const double& x) {
         return x;
     }
 
-    static double diff(double) {
+    static double diff(const double&) {
         return 1;
     }
 };
@@ -20,13 +20,13 @@ public:
     relu();
     ~relu();
 
-    static double f(double x) {
+    static double f(const double& x) {
         if(x < 0)
             return 0;
         return x;
     }
 
-    static double diff(double x) {
+    static double diff(const double& x) {
         if(x < 0)
             return 0;
         return 1;
@@ -38,11 +38,11 @@ public:
     sigmoid();
     ~sigmoid();
 
-    static double f(double x) {
+    static double f(const double& x) {
         return 1 / (1 + exp(-x));
     }
 
-    static double diff(double x) {
+    static double diff(const double& x) {
         double tmp = f(x);
         return tmp - tmp*tmp;
     }
@@ -53,11 +53,11 @@ public:
     fastmoid();
     ~fastmoid();
 
-    static double f(double x) {
+    static double f(const double& x) {
         return (x / (1 + abs(x)) + 1) / 2;
     }
 
-    static double diff(double x) {
+    static double diff(const double& x) {
         double tmp = 1 + abs(x);
         return 1/tmp/tmp/2;
     }
