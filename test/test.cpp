@@ -8,6 +8,7 @@ using namespace std::chrono;
 #include "neuralnet.h"
 #include "act_func.h"
 #include "loss.h"
+#include "regurizer.h"
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -76,6 +77,7 @@ int main() {
 #endif
 
     // fit the dataset
+    // net.fit_with_regurization<L1>(0.0001, 10000);
     net.fit(0.0001, 10000);
     cout << "yea------\n";
     //////////////////

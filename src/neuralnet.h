@@ -320,6 +320,39 @@ public:
         }
         // std::cout << "fitting done ----------\n";
     }
+
+    template<typename regurizer>
+    void fit_with_regurization(double rate, int epoch, int batch_size = -1, double lambda = -1) {
+        if(layers.size() < 2)
+            return;
+        if(batch_size == -1)
+            batch_size = train_in.size();
+        if(lambda == -1)
+            lambda = rate;
+        // std::cout << "fit---------\n";
+        double rb = rate / batch_size;
+        double lb = lambda / batch_size;
+        for(int i = 0; i < epoch; i++) {
+            clearGradient();
+            // std::cout << "gradients cleared---------\n";
+            for(int j = 0; j < batch_size; j++) {
+                feedforward(*train_in[j]);
+                backprop(train_out[j], batch_size);
+            }
+            // std::cout << "gradient: " << *gradient[0] << "\n";
+
+            for(int j = 0; j < gradient.size(); j++) {
+                // weights[j]->noalias() -= (*gradient[j]) * rb;
+                for(int k = 0; k < weights[j]->rows(); k++)
+                    for(int l = 0; l < weights[j]->cols(); l++)
+                        weights[j]->coeffRef(k, l) -= gradient[j]->coeff(k, l) * rb + regurizer::diff(weights[j]->coeff(k, l)) * lb;
+            }
+            for(int j = 1; j < biasGradient.size(); j++) {
+                biases[j]->noalias() -= (*biasGradient[j]) * rb;
+            }
+        }
+        // std::cout << "fitting done ----------\n";
+    }
 };
 
 #endif
