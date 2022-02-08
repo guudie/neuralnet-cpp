@@ -60,24 +60,15 @@ int main() {
     }
 
     net.attach(X, y);
-    // cout << X[0] << "\n\n";
-    // cout << (*net.getTrainX()[0]) << "\n";
 
-    // net.feedforward(X[0]);
-    // cout << (*net.getWeights()[0]) << "\n";
-    // double rate, epoch;
-    // cout << "learning rate: ";  cin >> rate;
-    // cout << "epoch: ";          cin >> epoch;
-    // 0.001 5000
-    // cout << (*(net.getWeights()[0])) << "\n";
 
 #ifdef DEBUGGING
     auto start = high_resolution_clock::now();
 #endif
 
     // fit the dataset
-    net.fit_with_regularization<L1>(0.0001, 10000, 32);
-    // net.fit(0.0001, 10000, 32);
+    // net.fit_with_regularization<L1>(0.0005, 5000, 32);
+    net.fit(0.0001, 10000, 32);
     cout << "yea------\n";
     //////////////////
 
