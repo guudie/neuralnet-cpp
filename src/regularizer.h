@@ -1,5 +1,5 @@
-#ifndef REGURIZER_H
-#define REGURIZER_H
+#ifndef REGULARIZER_H
+#define REGULARIZER_H
 
 class L1 {
 public:

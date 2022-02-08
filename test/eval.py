@@ -12,7 +12,7 @@ for i in range(n):
     y_eval.append(tmp_y)
 
 # y = np.add(np.multiply(np.sin(x_eval), 2), 4)
-y = np.multiply(np.add(x_eval, -5), np.add(x_eval, -5))
+y = np.add(np.multiply(np.add(x_eval, -5), np.add(x_eval, -5)), 5)
 
 plt.plot(x_eval, y_eval)
 plt.plot(x_eval, y)

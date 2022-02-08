@@ -1,6 +1,6 @@
-#define DEBUG
+#define DEBUGGING
 
-#ifdef DEBUG
+#ifdef DEBUGGING
 #include <chrono>
 using namespace std::chrono;
 #endif
@@ -8,7 +8,7 @@ using namespace std::chrono;
 #include "neuralnet.h"
 #include "act_func.h"
 #include "loss.h"
-#include "regurizer.h"
+#include "regularizer.h"
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -72,17 +72,17 @@ int main() {
     // 0.001 5000
     // cout << (*(net.getWeights()[0])) << "\n";
 
-#ifdef DEBUG
+#ifdef DEBUGGING
     auto start = high_resolution_clock::now();
 #endif
 
     // fit the dataset
-    // net.fit_with_regurization<L1>(0.0001, 10000);
-    net.fit(0.0001, 10000);
+    net.fit_with_regularization<L1>(0.0001, 10000, 32);
+    // net.fit(0.0001, 10000, 32);
     cout << "yea------\n";
     //////////////////
 
-#ifdef DEBUG
+#ifdef DEBUGGING
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
 

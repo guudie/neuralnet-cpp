@@ -1,12 +1,14 @@
 #ifndef NEURALNET_H
 #define NEURALNET_H
 
-#ifdef DEBUG
+#ifdef DEBUGGING
 #include <iostream>
+#define DEBUG(msg) std::cout<<msg
 #endif
 
-#include <vector>
 #include <eigen3/Eigen/Core>
+#include <algorithm>
+#include <vector>
 #include <random>
 
 
@@ -196,6 +198,22 @@ public:
             train_out.push_back(new Eigen::VectorXd(y[i]));
     }
 
+    int* randomShuffle() {
+        if(!train_in.size())
+            return NULL;
+        
+        // initialize some things
+        int sz = train_in.size();
+        int *indices = new int[sz];
+        std::iota(indices, indices + sz, 0);
+        
+        // shuffle the indices
+        auto rng = std::default_random_engine {};
+        std::shuffle(indices, indices + sz, rng);
+
+        return indices;
+    }
+
     void initWeights() {
         int n = layers.size();
         if(!n)
@@ -300,16 +318,17 @@ public:
             return;
         if(batch_size == -1)
             batch_size = train_in.size();
-        // std::cout << "fit---------\n";
+
+        int it = 0;
+        int sz = train_in.size();
         double rb = rate / batch_size;
         for(int i = 0; i < epoch; i++) {
             clearGradient();
-            // std::cout << "gradients cleared---------\n";
             for(int j = 0; j < batch_size; j++) {
-                feedforward(*train_in[j]);
-                backprop(train_out[j], batch_size);
+                feedforward(*train_in[(it + j) % sz]);
+                backprop(train_out[(it + j) % sz], batch_size);
             }
-            // std::cout << "gradient: " << *gradient[0] << "\n";
+            it = (it + batch_size) % sz;
 
             for(int j = 0; j < gradient.size(); j++) {
                 weights[j]->noalias() -= (*gradient[j]) * rb;
@@ -318,40 +337,38 @@ public:
                 biases[j]->noalias() -= (*biasGradient[j]) * rb;
             }
         }
-        // std::cout << "fitting done ----------\n";
     }
 
-    template<typename regurizer>
-    void fit_with_regurization(double rate, int epoch, int batch_size = -1, double lambda = -1) {
+    template<typename regularizer>
+    void fit_with_regularization(double rate, int epoch, int batch_size = -1, double lambda = -1) {
         if(layers.size() < 2)
             return;
         if(batch_size == -1)
             batch_size = train_in.size();
         if(lambda == -1)
             lambda = rate;
-        // std::cout << "fit---------\n";
+        
+        int it = 0;
+        int sz = train_in.size();
         double rb = rate / batch_size;
         double lb = lambda / batch_size;
         for(int i = 0; i < epoch; i++) {
             clearGradient();
-            // std::cout << "gradients cleared---------\n";
             for(int j = 0; j < batch_size; j++) {
-                feedforward(*train_in[j]);
-                backprop(train_out[j], batch_size);
+                feedforward(*train_in[(it + j) % sz]);
+                backprop(train_out[(it + j) % sz], batch_size);
             }
-            // std::cout << "gradient: " << *gradient[0] << "\n";
+            it = (it + batch_size) % sz;
 
             for(int j = 0; j < gradient.size(); j++) {
-                // weights[j]->noalias() -= (*gradient[j]) * rb;
                 for(int k = 0; k < weights[j]->rows(); k++)
                     for(int l = 0; l < weights[j]->cols(); l++)
-                        weights[j]->coeffRef(k, l) -= gradient[j]->coeff(k, l) * rb + regurizer::diff(weights[j]->coeff(k, l)) * lb;
+                        weights[j]->coeffRef(k, l) -= gradient[j]->coeff(k, l) * rb + regularizer::diff(weights[j]->coeff(k, l)) * lb;
             }
             for(int j = 1; j < biasGradient.size(); j++) {
                 biases[j]->noalias() -= (*biasGradient[j]) * rb;
             }
         }
-        // std::cout << "fitting done ----------\n";
     }
 };
 
