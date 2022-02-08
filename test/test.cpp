@@ -5,10 +5,7 @@
 using namespace std::chrono;
 #endif
 
-#include "neuralnet.h"
-#include "act_func.h"
-#include "loss.h"
-#include "regularizer.h"
+#include "inc.h"
 #include <iostream>
 #include <string>
 #include <fstream>
