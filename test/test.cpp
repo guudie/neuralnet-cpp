@@ -11,7 +11,6 @@ using namespace std::chrono;
 #include "regularizer.h"
 #include <iostream>
 #include <string>
-#include <string.h>
 #include <fstream>
 using namespace std;
 
