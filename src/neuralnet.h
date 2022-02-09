@@ -214,7 +214,7 @@ public:
         return indices;
     }
 
-    void initWeights() {
+    void init() {
         int n = layers.size();
         if(!n)
             return;

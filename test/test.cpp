@@ -25,7 +25,7 @@ int main() {
     net.addLayer(4);
     net.addOutput(1);
 
-    net.initWeights();
+    net.init();
 
     std::vector<Eigen::VectorXd> X;
     std::vector<Eigen::VectorXd> y;
