@@ -6,6 +6,7 @@
 #define DEBUG(msg) std::cout<<msg
 #endif
 
+#include "utils.h"
 #include <eigen3/Eigen/Core>
 #include <algorithm>
 #include <vector>
@@ -198,22 +199,6 @@ public:
             train_out.push_back(new Eigen::VectorXd(y[i]));
     }
 
-    int* randomShuffle() {
-        if(!train_in.size())
-            return NULL;
-        
-        // initialize some things
-        int sz = train_in.size();
-        int *indices = new int[sz];
-        std::iota(indices, indices + sz, 0);
-        
-        // shuffle the indices
-        auto rng = std::default_random_engine {};
-        std::shuffle(indices, indices + sz, rng);
-
-        return indices;
-    }
-
     void init() {
         int n = layers.size();
         if(!n)
@@ -293,15 +278,16 @@ public:
             }
         }
 
-        // calculate ∂E/∂a_i
         for(int l = L-1; l > 0; l--) {
             for(int j = 0; j < errors[l]->size(); j++) {
+                // calculate ∂E/∂a_i
                 errors[l]->coeffRef(j) = 0;
                 for(int i = 0; i < errors[l+1]->size(); i++) {
                     // double tmp = errors[l+1]->coeff(i) * activation::diff(terms[l+1]->coeff(i));
                     double tmp = errors[l+1]->coeff(i);         // optimized
                     errors[l]->coeffRef(j) += tmp * weights[l]->coeff(i, j);
                 }
+                
                 // for each u_jk that affects a_j
                 double tmp0 = errors[l]->coeff(j) * activation::diff(terms[l]->coeff(j));
                 errors[l]->coeffRef(j) = tmp0;                  // optimized
@@ -313,6 +299,8 @@ public:
         }
     }
 
+    // default fitting algorithm, uses SGD
+    // if batch_size == -1, uses GD
     void fit(double rate, int epoch, int batch_size = -1) {
         if(layers.size() < 2)
             return;
@@ -337,6 +325,10 @@ public:
                 biases[j]->noalias() -= (*biasGradient[j]) * rb;
             }
         }
+    }
+
+    void fit_with_optimizer() {
+        
     }
 
     template<typename regularizer>
