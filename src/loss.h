@@ -8,14 +8,14 @@
 class sse {
 public:
     static Eigen::VectorXd diff(const Eigen::VectorXd& y_bar, const Eigen::VectorXd& y, const int& batch_size) {
-        return (y_bar - y) * 2;
+        return (y_bar - y) * 2.0;
     }
 };
 
 class mse {
 public:
     static Eigen::VectorXd diff(const Eigen::VectorXd& y_bar, const Eigen::VectorXd& y, const int& batch_size) {
-        return (y_bar - y) * (2 / batch_size);
+        return (y_bar - y) * (2.0 / batch_size);
     }
 };
 
