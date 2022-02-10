@@ -5,3 +5,7 @@
 
 # binaries
 *.exe
+
+# dump files
+weights.txt
+x_to_y.txt
