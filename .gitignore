@@ -7,5 +7,5 @@
 *.exe
 
 # dump files
-weights.txt
-x_to_y.txt
+**/weights.txt
+**/x_to_y.txt
