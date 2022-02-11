@@ -273,7 +273,7 @@ public:
     // backprop algorithm
     // NOTE:
     // ** output layer is calculated separately
-    // ** errors[l] actually contains ∂E/∂a_i, but for optimization, at each step, all elements are multiplied by their respective act::diff
+    // ** errors[l] actually contains ∂E/∂a_i, but for optimization, at each step, all elements are multiplied by the act::diff of their respective terms[l]
     void backprop(Eigen::VectorXd* const& y_i, const int& batch_size) {
         int L = layers.size() - 1;
 
