@@ -165,6 +165,15 @@ public:
 
         validOut = true;
     }
+    
+    void clearGradient() {
+        for(auto it : gradient)
+            if(it)
+                it->setZero();
+        for(auto it : biasGradient)
+            if(it)
+                it->setZero();
+    }
 
     void randomize() {
         std::random_device r;
@@ -237,31 +246,34 @@ public:
         randomize();
     }
 
+    // feed forward algorithm
+    // the output layer has to be calculated separately due to some limitations with softmax
     void feedforward(const Eigen::VectorXd& input) {
-        // std::cout << "feed-------\n";
         if(!weights.size() || input.size() != layers[0]->size())
             return;
+        
+        // input layer
         (*layers[0]) = (*terms[0]) = input;
 
+        // calculate and activate the hidden layers
         int n = weights.size();
-        for(int i = 0; i < n; i++) {
+        for(int i = 0; i < n-1; i++) {
             // calculate the terms: t[l] = W[l-1] * a[l-1] + b[l]
             terms[i+1]->noalias() = ((*weights[i]) * (*layers[i])).eval() + (*biases[i+1]);
             // activate those terms: a[l] = act_func(t[l])
             for(int j = 0; j < terms[i+1]->size(); j++)
                 layers[i+1]->coeffRef(j) = activation::f(terms[i+1]->coeff(j));
         }
+
+        // calculate and activate the output layer
+        terms[n]->noalias() = ((*weights[n-1]) * (*layers[n-1])).eval() + (*biases[n]);
+        out_activation::f(layers[n], terms[n]);
     }
 
-    void clearGradient() {
-        for(auto it : gradient)
-            if(it)
-                it->setZero();
-        for(auto it : biasGradient)
-            if(it)
-                it->setZero();
-    }
-
+    // backprop algorithm
+    // NOTE:
+    // ** output layer is calculated separately
+    // ** errors[l] actually contains ∂E/∂a_i, but for optimization, at each step, all elements are multiplied by their respective act::diff
     void backprop(Eigen::VectorXd* const& y_i, const int& batch_size) {
         int L = layers.size() - 1;
 
@@ -270,8 +282,8 @@ public:
 
         // for each u_jk that affects a_j
         for(int j = 0; j < errors[L]->size(); j++) {
-            double tmp = errors[L]->coeff(j) * activation::diff(terms[L]->coeff(j));
-            errors[L]->coeffRef(j) = tmp;                       // optimized
+            double tmp = errors[L]->coeff(j) * out_activation::diff(terms[L]->coeff(j));
+            errors[L]->coeffRef(j) = tmp;                       // optimized, not actually ∂E/∂ȳ_i
             biasGradient[L]->coeffRef(j) += tmp;
             for(int k = 0; k < layers[L-1]->size(); k++) {
                 gradient[L-1]->coeffRef(j, k) += tmp * layers[L-1]->coeff(k);
@@ -290,7 +302,7 @@ public:
                 
                 // for each u_jk that affects a_j
                 double tmp0 = errors[l]->coeff(j) * activation::diff(terms[l]->coeff(j));
-                errors[l]->coeffRef(j) = tmp0;                  // optimized
+                errors[l]->coeffRef(j) = tmp0;                  // optimized, not actually ∂E/∂a_i
                 biasGradient[l]->coeffRef(j) += tmp0;
                 for(int k = 0; k < layers[l-1]->size(); k++) {
                     gradient[l-1]->coeffRef(j, k) += tmp0 * layers[l-1]->coeff(k);
