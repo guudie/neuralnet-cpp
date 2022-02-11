@@ -15,7 +15,7 @@ x4 = np.multiply(x3, x)
 #     y.append(15 * x3[i] + random.uniform(-5, 5))
 # y = np.add(np.multiply(np.sin(x), 2), 4)
 y1 = np.add(np.multiply(np.add(x, -5), np.add(x, -5)), 5)
-y2 = np.multiply(np.add(np.multiply(np.add(x, -5), np.add(x, -5)), -5), -1)
+y2 = np.add(np.multiply(x, 2), -3)
 
 fout = open("../dump/dataset.txt", "w")
 pd.set_option('display.float_format', lambda x: '%.10f' % x)

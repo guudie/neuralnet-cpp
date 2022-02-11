@@ -16,7 +16,8 @@ for i in range(n):
 
 # y = np.add(np.multiply(np.sin(x_eval), 2), 4)
 y1 = np.add(np.multiply(np.add(x_eval, -5), np.add(x_eval, -5)), 5)
-y2 = np.multiply(np.add(np.multiply(np.add(x_eval, -5), np.add(x_eval, -5)), -5), -1)
+# y2 = np.multiply(np.add(np.multiply(np.add(x_eval, -5), np.add(x_eval, -5)), -5), -1)
+y2 = np.add(np.multiply(x_eval, 2), -3)
 
 plt.plot(x_eval, y_eval1)
 plt.plot(x_eval, y_eval2)

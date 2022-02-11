@@ -17,7 +17,7 @@ int main() {
     fstream eval("../dump/x_to_y.txt", ios::out);
     fout.precision(10);
     eval.precision(10);
-    neuralnet<relu, linear, sse> net;
+    neuralnet<linear, linear, sse> net;
 
     net.addLayer(2);
     net.addLayer(4);
