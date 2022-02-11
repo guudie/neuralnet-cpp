@@ -17,13 +17,13 @@ int main() {
     fstream eval("../dump/x_to_y.txt", ios::out);
     fout.precision(10);
     eval.precision(10);
-    neuralnet<linear, linear, sse> net;
+    neuralnet<relu, linear, sse> net;
 
     net.addLayer(2);
     net.addLayer(4);
     net.addLayer(4);
     net.addLayer(4);
-    net.addOutput(1);
+    net.addOutput(2);
 
     net.init();
 
@@ -36,20 +36,20 @@ int main() {
     fin.ignore();
     getline(fin, tmp);
     int place;
-    double* x_i = new double[ins];
-    double* y_i = new double[outs];
+    double x_i;
+    double y_i;
     for(int i = 0; i < n; i++) {
         Eigen::VectorXd tmp_x(ins);
         Eigen::VectorXd tmp_y(outs);
 
         fin >> place;
         for(int i = 0; i < ins; i++) {
-            fin >> x_i[i];
-            tmp_x.coeffRef(i) = x_i[i];
+            fin >> x_i;
+            tmp_x.coeffRef(i) = x_i;
         }
         for(int i = 0; i < outs; i++) {
-            fin >> y_i[i];
-            tmp_y.coeffRef(i) = y_i[i];
+            fin >> y_i;
+            tmp_y.coeffRef(i) = y_i;
         }
 
         X.push_back(tmp_x);
@@ -98,6 +98,6 @@ int main() {
         }
         net.feedforward(eval_tmp);
 
-        eval << i << " " << net.getOutput() << "\n";
+        eval << i << " " << net.getOutput().coeff(0) << " " << net.getOutput().coeff(1) << "\n";
     }
 }
