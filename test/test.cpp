@@ -65,6 +65,7 @@ int main() {
 
     // fit the dataset
     // net.fit_with_regularization<L1>(0.0005, 5000, 32);
+    // net.fit_with_optimizer<NAG>(0.00001, 5000, 32);
     net.fit(0.0001, 10000, 32);
     cout << "yea------\n";
     //////////////////

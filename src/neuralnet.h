@@ -8,9 +8,7 @@
 
 #include "utils.h"
 #include <eigen3/Eigen/Core>
-#include <algorithm>
 #include <vector>
-#include <random>
 
 
 template<typename activation, typename out_activation, typename loss>
@@ -34,6 +32,8 @@ private:
 
     bool validOut;
 
+
+    friend class MSGD;
 
 public:
     neuralnet() : validOut(false), output(NULL) {};
@@ -339,8 +339,15 @@ public:
         }
     }
 
-    void fit_with_optimizer() {
+    // fit with optimizer, very experimental
+    template<typename optimizer>
+    void fit_with_optimizer(double rate, int epoch, int batch_size = -1) {
+        if(layers.size() < 2)
+            return;
+        if(batch_size == -1)
+            batch_size = train_in.size();
         
+        optimizer::fit(*this, rate, epoch, batch_size);
     }
 
     template<typename regularizer>
