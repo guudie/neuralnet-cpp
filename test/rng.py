@@ -33,9 +33,9 @@ data["x2"] = x2
 # data["x4"] = x4
 data["y1"] = y1
 data["y2"] = y2
-print(len(data), file=fout)
+print(n, file=fout)
 print(2, 2, file=fout)
-print(data, file=fout)
+print(data.to_string(index=False, header=False), file=fout)
 
 
 tout = open("../dump/training_data.txt", "w")
