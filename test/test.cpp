@@ -98,6 +98,6 @@ int main() {
         }
         net.feedforward(eval_tmp);
 
-        eval << i << " " << net.getOutput().coeff(0) << " " << net.getOutput().coeff(1) << "\n";
+        eval << i << " " << net.getOutput().transpose() << "\n";
     }
 }
