@@ -107,7 +107,9 @@ int main() {
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
 
-    cout << "Execution time: " << duration.count() << " ms\n";
+    DEBUG("Execution time: ");
+    DEBUG(duration.count());
+    DEBUG(" ms\n");
 #endif
     
     // output the parameters

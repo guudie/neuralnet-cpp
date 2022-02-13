@@ -1,0 +1,5 @@
+[ ] implement data shuffling
+[ ] implement some other loss functions
+[ ] implement some other activation functions
+[ ] implement some other optimizers
+[ ] make neural net compatible with all loss functions, all activation functions (especially softmax and sigmoid), and all optimizers

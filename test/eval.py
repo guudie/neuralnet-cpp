@@ -28,14 +28,14 @@ for i in range(n):
 f.close()
 
 
-# fig = plt.figure()
-# ax = plt.axes(projection='3d')
-# ax.scatter(y1, y2, xx, color='green')
-# ax.plot3D(y_eval1, y_eval2, x_eval, 'crimson', linewidth=2)
-# plt.show()
-
 plt.plot(x_eval, y_eval1, color='purple')
 plt.plot(x_eval, y_eval2, color='crimson')
 plt.scatter(xx, y1, color='lightsteelblue')
 plt.scatter(xx, y2, color='navajowhite')
 plt.show()
+
+# fig = plt.figure()
+# ax = plt.axes(projection='3d')
+# ax.scatter(y1, y2, xx, color='green')
+# ax.plot3D(y_eval1, y_eval2, x_eval, 'crimson', linewidth=2)
+# plt.show()

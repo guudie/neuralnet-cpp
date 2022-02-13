@@ -9,6 +9,8 @@ public:
     static double diff(const double& w) {
         if(w < 0)
             return -1;
+        if(w == 0)
+            return 0;
         return 1;
     }
 };
