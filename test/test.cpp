@@ -1,9 +1,4 @@
-#define DEBUGGING
-
-#ifdef DEBUGGING
-#include <chrono>
-using namespace std::chrono;
-#endif
+#include "log.h"
 
 #include "inc.h"
 #include <iostream>
@@ -85,7 +80,7 @@ int main() {
     readTrainingData("../dump/dataset.txt", X, y, n, ins, outs);
 
     // initialize the network
-    neuralnet<linear, linear, sse> net;
+    neuralnet<Linear, Linear, SSE> net;
     net.addLayer(ins);
     net.addLayer(4);
     net.addLayer(4);

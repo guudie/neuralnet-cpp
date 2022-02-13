@@ -5,14 +5,14 @@
 #include <eigen3/Eigen/Core>
 #endif
 
-class sse {
+class SSE {
 public:
     static Eigen::VectorXd diff(const Eigen::VectorXd& y_bar, const Eigen::VectorXd& y, const int& batch_size) {
         return (y_bar - y) * 2.0;
     }
 };
 
-class mse {
+class MSE {
 public:
     static Eigen::VectorXd diff(const Eigen::VectorXd& y_bar, const Eigen::VectorXd& y, const int& batch_size) {
         return (y_bar - y) * (2.0 / batch_size);

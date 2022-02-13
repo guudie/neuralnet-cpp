@@ -5,10 +5,10 @@
 #include <eigen3/Eigen/Core>
 #endif
 
-class linear {
+class Linear {
 public:
-    linear();
-    ~linear();
+    Linear();
+    ~Linear();
 
     static double f(const double& x) {
         return x;
@@ -25,10 +25,10 @@ public:
     }
 };
 
-class relu {
+class ReLU {
 public:
-    relu();
-    ~relu();
+    ReLU();
+    ~ReLU();
 
     static double f(const double& x) {
         if(x < 0)
@@ -49,10 +49,10 @@ public:
     }
 };
 
-class sigmoid {
+class Sigmoid {
 public:
-    sigmoid();
-    ~sigmoid();
+    Sigmoid();
+    ~Sigmoid();
 
     static double f(const double& x) {
         return 1 / (1 + exp(-x));
@@ -70,10 +70,10 @@ public:
     }
 };
 
-class fastmoid {
+class Fastmoid {
 public:
-    fastmoid();
-    ~fastmoid();
+    Fastmoid();
+    ~Fastmoid();
 
     static double f(const double& x) {
         return (x / (1 + abs(x)) + 1) / 2;
@@ -91,10 +91,31 @@ public:
     }
 };
 
-class softmax {
+class Tanh {
 public:
-    softmax();
-    ~softmax();
+    Tanh();
+    ~Tanh();
+
+    static double f(const double& x) {
+        return tanh(x);
+    }
+
+    static void f(Eigen::VectorXd* layer, const Eigen::VectorXd* term) {
+        for(int i = 0; i < term->size(); i++) {
+            layer->coeffRef(i) = f(term->coeff(i));
+        }
+    }
+
+    static double diff(const double& x) {
+        double tmp = cosh(x);
+        return 1/tmp/tmp;
+    }
+};
+
+class Softmax {
+public:
+    Softmax();
+    ~Softmax();
 
     
 };

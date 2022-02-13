@@ -1,11 +1,6 @@
 #ifndef NEURALNET_H
 #define NEURALNET_H
 
-#ifdef DEBUGGING
-#include <iostream>
-#define DEBUG(msg) std::cout<<msg
-#endif
-
 #include "utils.h"
 #include <eigen3/Eigen/Core>
 #include <vector>
@@ -38,16 +33,7 @@ private:
 public:
     neuralnet() : validOut(false), output(NULL) {};
     ~neuralnet() {
-        cleanWeights();
-        cleanGradient();
-        cleanTerms();
-        cleanLayers();
-        // cleanOutput();    dont need this
-        cleanErrors();
-        cleanBiases();
-        cleanBiasGradient();
-        cleanTrain_in();
-        cleanTrain_out();
+        cleanAll();
     }
 
     //
@@ -113,6 +99,20 @@ public:
             validOut = false;
             output = NULL;
         }
+    }
+    
+    void cleanAll() {
+        cleanWeights();
+        cleanGradient();
+        cleanTerms();
+        cleanLayers();
+        // cleanOutput();    dont need this
+        cleanErrors();
+        cleanBiases();
+        cleanBiasGradient();
+        cleanTrain_in();
+        cleanTrain_out();
+        validOut = false;
     }
 
     const Eigen::VectorXd& getOutput() {
