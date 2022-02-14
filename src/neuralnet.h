@@ -175,7 +175,7 @@ public:
                 it->setZero();
     }
 
-    void randomize() {
+    void randomizeParams() {
         std::random_device r;
         std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
         std::mt19937 eng(seed);
@@ -243,7 +243,7 @@ public:
             newErr->setZero();
             errors.push_back(newErr);
         }
-        randomize();
+        randomizeParams();
     }
 
     // feed forward algorithm
