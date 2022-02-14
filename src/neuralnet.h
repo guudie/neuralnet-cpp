@@ -175,12 +175,22 @@ public:
                 it->setZero();
     }
 
-    void randomizeParams() {
+    void setBiases(const double& num = 0.1) {
+        for(auto it : biases) {
+            if(it)
+                for(int i = 0; i < it->rows(); i++)
+                    for(int j = 0; j < it->cols(); j++) {
+                        it->coeffRef(i, j) = num;
+                    }
+        }
+    }
+
+    void randomizeParams(const double& from, const double& to) {
         std::random_device r;
         std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
         std::mt19937 eng(seed);
-        std::uniform_real_distribution<double> urd(-.5, .5);
-        // std::cout << weights[0]->cols() << "; " << weights[0]->rows() << "\n";
+        std::uniform_real_distribution<double> urd(from, to);
+        
         for(auto it : weights) {
             for(int i = 0; i < it->rows(); i++)
                 for(int j = 0; j < it->cols(); j++) {
@@ -208,9 +218,10 @@ public:
             train_out.push_back(new Eigen::VectorXd(y[i]));
     }
 
+    // initialize all components of neuralnet and set them to zeros
     void init() {
         int n = layers.size();
-        if(!n)
+        if(n < 2 || errors.size())
             return;
         
         errors.push_back(NULL);
@@ -243,7 +254,32 @@ public:
             newErr->setZero();
             errors.push_back(newErr);
         }
-        randomizeParams();
+    }
+
+    // blind random initialization in a range
+    void blindInit(const double& from = -.5, const double& to = .5) {
+        init();
+        randomizeParams(from, to);
+    }
+
+    // Xavier initilization, WIP, very experimental
+    void XavierInit() {
+        init();
+        // veeeeeery janky, use with caution
+        if(activation::name() == "ReLU" || out_activation::name() == "ReLU")
+            setBiases();
+        
+        std::random_device r;
+        std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
+        std::mt19937 eng(seed);
+
+        for(auto it : weights) {
+            double num = 1.0 / sqrt(it->cols());
+            for(int i = 0; i < it->rows(); i++)
+                for(int j = 0; j < it->cols(); j++) {
+                    it->coeffRef(i, j) = std::uniform_real_distribution<double>(-num, num)(eng);
+                }
+        }
     }
 
     // feed forward algorithm

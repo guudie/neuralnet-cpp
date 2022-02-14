@@ -87,7 +87,7 @@ int main() {
     net.addLayer(4);
     net.addOutput(outs);
 
-    net.init();
+    net.blindInit();
 
     net.attach(X, y);
 
@@ -98,7 +98,7 @@ int main() {
 
     // fit the dataset
     // net.fit_with_regularization<L1>(0.0005, 5000, 32);
-    // net.fit_with_optimizer<MSGD>(0.00003, 2500, 32);
+    // net.fit_with_optimizer<MSGD>(0.0005, 10000, 32);
     net.fit(0.0001, 10000, 32);
     cout << "yea------\n";
     //////////////////

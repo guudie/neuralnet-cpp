@@ -23,6 +23,10 @@ public:
     static double diff(const double&) {
         return 1;
     }
+
+    static std::string name() {
+        return "Linear";
+    }
 };
 
 class ReLU {
@@ -47,6 +51,10 @@ public:
             return 0;
         return 1;
     }
+
+    static std::string name() {
+        return "ReLU";
+    }
 };
 
 class Sigmoid {
@@ -67,6 +75,10 @@ public:
     static double diff(const double& x) {
         double tmp = f(x);
         return tmp - tmp*tmp;
+    }
+
+    static std::string name() {
+        return "Sigmoid";
     }
 };
 
@@ -89,6 +101,10 @@ public:
         double tmp = 1 + abs(x);
         return 1/tmp/tmp/2;
     }
+
+    static std::string name() {
+        return "Fastmoid";
+    }
 };
 
 class Tanh {
@@ -109,6 +125,10 @@ public:
     static double diff(const double& x) {
         double tmp = cosh(x);
         return 1/tmp/tmp;
+    }
+
+    static std::string name() {
+        return "Tanh";
     }
 };
 
