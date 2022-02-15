@@ -52,7 +52,7 @@ public:
     }
 
     template<typename A, typename B, typename C>
-    static void fit(neuralnet<A, B, C>& net, double rate, int epoch, int batch_size, double gamma = 0.9) {
+    static void fit(neuralnet<A, B, C>& net, double rate, int steps, int batch_size, double gamma = 0.9) {
         matContainer wv;
         vecContainer bv;
         bv.push_back(NULL);
@@ -69,7 +69,7 @@ public:
         int it = 0;
         int sz = net.train_in.size();
         double rb = rate / batch_size;
-        for(int i = 0; i < epoch; i++) {
+        for(int i = 0; i < steps; i++) {
             net.clearGradient();
             for(int j = 0; j < batch_size; j++) {
                 net.feedforward(*net.train_in[(it + j) % sz]);
@@ -145,7 +145,7 @@ public:
     }
 
     template<typename A, typename B, typename C>
-    static void fit(neuralnet<A, B, C>& net, double rate, int epoch, int batch_size, double gamma = 0.9) {
+    static void fit(neuralnet<A, B, C>& net, double rate, int steps, int batch_size, double gamma = 0.9) {
         matContainer wG;
         vecContainer bG;
         bG.push_back(NULL);
@@ -162,7 +162,7 @@ public:
         int it = 0;
         int sz = net.train_in.size();
         double rb = rate / batch_size;
-        for(int i = 0; i < epoch; i++) {
+        for(int i = 0; i < steps; i++) {
             net.clearGradient();
             for(int j = 0; j < batch_size; j++) {
                 net.feedforward(*net.train_in[(it + j) % sz]);

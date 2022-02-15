@@ -353,7 +353,7 @@ public:
 
     // default fitting algorithm, uses SGD
     // if batch_size == -1, uses GD
-    void fit(double rate, int epoch, int batch_size = -1) {
+    void fit(double rate, int steps, int batch_size = -1) {
         if(layers.size() < 2)
             return;
         if(batch_size == -1)
@@ -362,7 +362,7 @@ public:
         int it = 0;
         int sz = train_in.size();
         double rb = rate / batch_size;
-        for(int i = 0; i < epoch; i++) {
+        for(int i = 0; i < steps; i++) {
             clearGradient();
             for(int j = 0; j < batch_size; j++) {
                 feedforward(*train_in[(it + j) % sz]);
@@ -381,7 +381,7 @@ public:
 
     // fit with optimizer, very experimental
     template<typename optimizer>
-    void fit_with_optimizer(double rate, int epoch, int batch_size = -1) {
+    void fit_with_optimizer(double rate, int steps, int batch_size = -1) {
         if(layers.size() < 2)
             return;
         if(batch_size == -1)
@@ -392,7 +392,7 @@ public:
         int it = 0;
         int sz = train_in.size();
         double rb = rate / batch_size;
-        for(int i = 0; i < epoch; i++) {
+        for(int i = 0; i < steps; i++) {
             clearGradient();
             for(int j = 0; j < batch_size; j++) {
                 feedforward(*train_in[(it + j) % sz]);
@@ -404,11 +404,11 @@ public:
         }
 
         // or this      ///////////////////////////////////////
-        // optimizer::fit(*this, rate, epoch, batch_size);
+        // optimizer::fit(*this, rate, steps, batch_size);
     }
 
     template<typename regularizer>
-    void fit_with_regularizer(double rate, int epoch, int batch_size = -1, double lambda = -1) {
+    void fit_with_regularizer(double rate, int steps, int batch_size = -1, double lambda = -1) {
         if(layers.size() < 2)
             return;
         if(batch_size == -1)
@@ -420,7 +420,7 @@ public:
         int sz = train_in.size();
         double rb = rate / batch_size;
         double lb = lambda / batch_size;
-        for(int i = 0; i < epoch; i++) {
+        for(int i = 0; i < steps; i++) {
             clearGradient();
             for(int j = 0; j < batch_size; j++) {
                 feedforward(*train_in[(it + j) % sz]);
