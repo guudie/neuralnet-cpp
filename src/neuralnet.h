@@ -32,6 +32,7 @@ private:
 
 
     friend class MSGD;
+    friend class AdaGrad;
 
 public:
     neuralnet() : validOut(false), output(NULL) {};
@@ -407,7 +408,7 @@ public:
     }
 
     template<typename regularizer>
-    void fit_with_regularization(double rate, int epoch, int batch_size = -1, double lambda = -1) {
+    void fit_with_regularizer(double rate, int epoch, int batch_size = -1, double lambda = -1) {
         if(layers.size() < 2)
             return;
         if(batch_size == -1)

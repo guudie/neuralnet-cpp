@@ -143,6 +143,59 @@ public:
             }
         }
     }
+
+    template<typename A, typename B, typename C>
+    static void fit(neuralnet<A, B, C>& net, double rate, int epoch, int batch_size, double gamma = 0.9) {
+        matContainer wG;
+        vecContainer bG;
+        bG.push_back(NULL);
+        for(auto a : net.gradient) {
+            Eigen::MatrixXd* tmp_w = new Eigen::MatrixXd(a->rows(), a->cols());
+            tmp_w->setZero();
+            wG.push_back(tmp_w);
+
+            Eigen::VectorXd* tmp_b = new Eigen::VectorXd(a->rows());
+            tmp_b->setZero();
+            bG.push_back(tmp_b);
+        }
+
+        int it = 0;
+        int sz = net.train_in.size();
+        double rb = rate / batch_size;
+        for(int i = 0; i < epoch; i++) {
+            net.clearGradient();
+            for(int j = 0; j < batch_size; j++) {
+                net.feedforward(*net.train_in[(it + j) % sz]);
+                net.backprop(net.train_out[(it + j) % sz], batch_size);
+            }
+            it = (it + batch_size) % sz;
+
+            for(int l = 0; l < net.gradient.size(); l++) {
+                for(int i = 0; i < net.gradient[l]->rows(); i++) {
+                    for(int j = 0; j < net.gradient[l]->cols(); j++) {
+                        wG[l]->coeffRef(i, j) += net.gradient[l]->coeff(i, j) * net.gradient[l]->coeff(i, j);
+                        double num = rb * invSqrt(wG[l]->coeff(i, j) + EPS);
+                        net.weights[l]->coeffRef(i, j) -= net.gradient[l]->coeff(i, j) * num;
+                    }
+                }
+
+                for(int i = 0; i < net.biasGradient[l+1]->size(); i++) {
+                    bG[l+1]->coeffRef(i) += net.biasGradient[l+1]->coeff(i) * net.biasGradient[l+1]->coeff(i);
+                    double num = rb * invSqrt(bG[l+1]->coeff(i) + EPS);
+                    net.biases[l+1]->coeffRef(i) -= net.biasGradient[l+1]->coeff(i) * num;
+                }
+            }
+        }
+
+        for(int i = 0; i < wG.size(); i++) {
+            delete wG[i];
+            delete bG[i+1];
+        }
+    }
+
+    static std::string name(){
+        return "AdaGrad";
+    }
 };
 
 #endif
