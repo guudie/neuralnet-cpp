@@ -9,19 +9,22 @@
 template<typename activation, typename out_activation, typename loss>
 class neuralnet {
 private:
+    typedef std::vector<Eigen::MatrixXd*> matContainer;
+    typedef std::vector<Eigen::VectorXd*> vecContainer;
 
-    std::vector<Eigen::MatrixXd*> weights;          // matrices of weights between layers
-    std::vector<Eigen::MatrixXd*> gradient;
 
-    std::vector<Eigen::VectorXd*> terms;            // linear term: W * a + b
-    std::vector<Eigen::VectorXd*> layers;           // includes input layer and all hidden layers
-    std::vector<Eigen::VectorXd*> errors;           // dE/dn where E is cost, n is a neuron
+    matContainer weights;           // matrices of weights between layers
+    matContainer gradient;
 
-    std::vector<Eigen::VectorXd*> biases;
-    std::vector<Eigen::VectorXd*> biasGradient;
+    vecContainer terms;             // linear term: W * a + b
+    vecContainer layers;            // includes input layer and all hidden layers
+    vecContainer errors;            // dE/dn where E is cost, n is a neuron
 
-    std::vector<Eigen::VectorXd*> train_in;
-    std::vector<Eigen::VectorXd*> train_out;
+    vecContainer biases;
+    vecContainer biasGradient;
+
+    vecContainer train_in;
+    vecContainer train_out;
     
     Eigen::VectorXd* output;
 
@@ -119,19 +122,19 @@ public:
         return *output;
     }
 
-    const std::vector<Eigen::MatrixXd*>& getWeights() {
+    const matContainer& getWeights() {
         return weights;
     }
 
-    const std::vector<Eigen::VectorXd*>& getTrainX() {
+    const vecContainer& getTrainX() {
         return train_in;
     }
 
-    const std::vector<Eigen::VectorXd*>& getLayers() {
+    const vecContainer& getLayers() {
         return layers;
     }
 
-    const std::vector<Eigen::VectorXd*>& getBiases() {
+    const vecContainer& getBiases() {
         return biases;
     }
     
@@ -383,7 +386,24 @@ public:
         if(batch_size == -1)
             batch_size = train_in.size();
         
-        optimizer::fit(*this, rate, epoch, batch_size);
+        // either this  ///////////////////////////////////////
+        optimizer opt(gradient, biasGradient);
+        int it = 0;
+        int sz = train_in.size();
+        double rb = rate / batch_size;
+        for(int i = 0; i < epoch; i++) {
+            clearGradient();
+            for(int j = 0; j < batch_size; j++) {
+                feedforward(*train_in[(it + j) % sz]);
+                backprop(train_out[(it + j) % sz], batch_size);
+            }
+            it = (it + batch_size) % sz;
+
+            opt(weights, gradient, biases, biasGradient, rb);
+        }
+
+        // or this      ///////////////////////////////////////
+        // optimizer::fit(*this, rate, epoch, batch_size);
     }
 
     template<typename regularizer>

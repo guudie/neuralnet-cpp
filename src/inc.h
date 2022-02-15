@@ -17,8 +17,8 @@
 #include "regularizer.h"
 #endif
 
-// #ifndef OPTIMIZER_H
-// #include "optimizer.h"
-// #endif
+#ifndef OPTIMIZERS_H
+#include "optimizers.h"
+#endif
 
 #endif

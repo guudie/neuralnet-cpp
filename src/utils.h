@@ -32,20 +32,21 @@ void shuffle(T* arr, int n) {
 }
 
 // fast inverse square root
-float invSqrt(float number){
+double invSqrt(double number){
     union {
-        float f;
-        uint32_t i;
+        double d;
+        uint64_t i;
     } conv;
 
-    float x2;
-    const float threehalfs = 1.5F;
+    double x2;
+    const double threehalfs = 1.5;
 
-    x2 = number * 0.5F;
-    conv.f = number;
-    conv.i = 0x5f3759df - ( conv.i >> 1 );
-    conv.f = conv.f * ( threehalfs - ( x2 * conv.f * conv.f ) );
-    return conv.f;
+    x2 = number * 0.5;
+    conv.d = number;
+    conv.i = 0x5fe6eb50c7b537a9 - ( conv.i >> 1 );
+    conv.d = conv.d * ( threehalfs - ( x2 * conv.d * conv.d ) );
+    conv.d = conv.d * ( threehalfs - ( x2 * conv.d * conv.d ) );
+    return conv.d;
 }
 
 #endif
