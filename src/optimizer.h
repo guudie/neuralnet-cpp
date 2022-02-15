@@ -12,12 +12,17 @@ public:
 
     template<typename activation, typename out_activation, typename loss>
     static void fit(neuralnet<activation, out_activation, loss>& net, double rate, int epoch, int batch_size, double gamma = 0.9) {
-        std::vector<Eigen::MatrixXd*> v;
+        std::vector<Eigen::MatrixXd*> wv;
+        std::vector<Eigen::VectorXd*> bv;
+        bv.push_back(NULL);
         for(auto a : net.gradient) {
-            Eigen::MatrixXd* tmp = new Eigen::MatrixXd(a->rows(), a->cols());
-            tmp->setZero();
+            Eigen::MatrixXd* tmp_w = new Eigen::MatrixXd(a->rows(), a->cols());
+            tmp_w->setZero();
+            wv.push_back(tmp_w);
 
-            v.push_back(tmp);
+            Eigen::VectorXd* tmp_b = new Eigen::VectorXd(a->rows());
+            tmp_b->setZero();
+            bv.push_back(tmp_b);
         }
 
         int it = 0;
@@ -32,16 +37,18 @@ public:
             it = (it + batch_size) % sz;
 
             for(int j = 0; j < net.gradient.size(); j++) {
-                v[j]->noalias() = (*v[j]) * gamma + (*net.gradient[j]) * rb;
-                net.weights[j]->noalias() -= *v[j];
+                wv[j]->noalias() = (*wv[j]) * gamma + (*net.gradient[j]) * rb;
+                net.weights[j]->noalias() -= *wv[j];
             }
             for(int j = 1; j < net.biasGradient.size(); j++) {
-                net.biases[j]->noalias() -= (*net.biasGradient[j]) * rb;
+                bv[j]->noalias() = (*bv[j]) * gamma + (*net.biasGradient[j]) * rb;
+                net.biases[j]->noalias() -= *bv[j];
             }
         }
 
-        for(auto a : v) {
-            delete a;
+        for(int i = 0; i < wv.size(); i++) {
+            delete wv[i];
+            delete bv[i+1];
         }
     }
 };
