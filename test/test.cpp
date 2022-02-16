@@ -98,7 +98,7 @@ int main() {
 
     // fit the dataset
     // net.fit_with_regularizer<L1>(0.0005, 5000, 32);
-    net.fit_with_optimizer<AdaGrad>(1, 2000, 32);
+    net.fit_with_optimizer<Adam>(1, 500, 32);
     // net.fit(0.0001, 10000, 32);
     cout << "yea------\n";
     //////////////////
