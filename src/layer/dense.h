@@ -19,7 +19,7 @@ private:
     mat* z;         // calculated terms: z = W * a[i-1] + b  (size_out x obs)
     mat* da;        // ∂E / ∂a
     mat* dz;        // ∂E / ∂z = [∂E / ∂a] * [∂a / ∂z]
-    mat* din;       // ∂a / ∂z = σ'(z)
+    mat* daz;       // ∂a / ∂z = σ'(z)
 
     vec* b;         // bias of this layer   (size_out x 1)
     vec* db;        // ∂E / ∂b  (size_out x 1)
@@ -33,19 +33,27 @@ public:
         z = NULL;
         da = NULL;
         dz = NULL;
-        din = NULL;
+        daz = NULL;
         b = NULL;
         db = NULL;
         W = NULL;
         dW = NULL;
     }
     ~dense() {
+        clearAll();
+    }
+
+    // clear
+    void clearAll() {
         delete a;
         delete z;
         delete da;
         delete dz;
+        delete daz;
         delete b;
         delete db;
+        delete W;
+        delete dW;
     }
 
     // get output data
@@ -54,14 +62,32 @@ public:
     }
 
     // initialize all params
-    void init() {
-        // tf is this?? delete it
-        a = new mat(size_out, 1);
-        z = new mat(size_out, 1);
-        b = new vec(size_out);
-        W = new mat(size_out, size_in);
-        W->array() = 1;
-        b->array() = 2;
+    void init(const int& batch_size = 1) {
+        clearAll();
+        a       = new mat(size_out, batch_size);
+        z       = new mat(size_out, batch_size);
+        da      = new mat(size_out, batch_size);
+        dz      = new mat(size_out, batch_size);
+        daz     = new mat(size_out, batch_size);
+        b       = new vec(size_out);
+        db      = new vec(size_out);
+        W       = new mat(size_out, size_in);
+        dW      = new mat(size_out, size_in);
+    }
+
+    // random init
+    void randInit(const int& batch_size = 1) {
+        init();
+        std::random_device r;
+        std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
+        std::mt19937 eng(seed);
+        std::uniform_real_distribution<double> urd(-.5, .5);
+
+        for(int i = 0; i < W->rows(); i++) {
+            for(int j = 0; j < W->cols(); j++)
+                W->coeffRef(i, j) = urd(eng);
+            b->coeffRef(i) = urd(eng);
+        }
     }
 
     // calculate this layer's terms and activate them

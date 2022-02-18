@@ -5,6 +5,9 @@
 #include <eigen3/Eigen/Core>
 #endif
 
+#include <algorithm>
+#include <random>
+
 class layer {
 protected:
     typedef Eigen::MatrixXd mat;
@@ -21,7 +24,10 @@ public:
     virtual const mat& getData() = 0;
 
     // initialize layer;
-    virtual void init() = 0;
+    virtual void init(const int& batch_size = 1) = 0;
+
+    // random init
+    virtual void randInit(const int& batch_size = 1) = 0;
 
     // calculate this layer's outputs
     virtual void evaluate(const mat& data_in) = 0;

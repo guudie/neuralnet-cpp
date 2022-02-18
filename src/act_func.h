@@ -20,8 +20,8 @@ public:
     }
 
     // default activation derivative (linear) σ'(z) = 1
-    static void diff(mat& din, const mat& z) {
-        din.array() = 1;
+    static void diff(mat& daz, const mat& z) {
+        daz.array() = 1;
     }
 };
 

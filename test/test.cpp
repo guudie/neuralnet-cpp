@@ -12,8 +12,10 @@ int main() {
     neuralnet net;
     net.addLayer(tmp_in);
 
-    Eigen::VectorXd in(3);
-    in << 1, 2, 3;
+    Eigen::MatrixXd in(3, 2);
+    in <<   1, 4,
+            2, 5,
+            3, 6;
     
     net.feedforward(in);
     cout << net.getNetwork()[0]->getData();
