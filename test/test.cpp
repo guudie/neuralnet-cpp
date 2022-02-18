@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-    layer* tmp_in = new dense<activation>(3, 1);
+    layer* tmp_in = new dense<Linear>(3, 1);
     tmp_in->init();
 
     neuralnet net(0.0001, 10000, 32);

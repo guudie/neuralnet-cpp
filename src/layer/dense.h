@@ -19,7 +19,6 @@ private:
     mat* z;         // calculated terms: z = W * a[i-1] + b  (size_out x obs)
     mat* da;        // ∂E / ∂a
     mat* dz;        // ∂E / ∂z = [∂E / ∂a] * [∂a / ∂z]
-    mat* daz;       // ∂a / ∂z = σ'(z)
 
     vec* b;         // bias of this layer   (size_out x 1)
     vec* db;        // ∂E / ∂b  (size_out x 1)
@@ -33,7 +32,6 @@ public:
         z = NULL;
         da = NULL;
         dz = NULL;
-        daz = NULL;
         b = NULL;
         db = NULL;
         W = NULL;
@@ -49,7 +47,6 @@ public:
         delete z;
         delete da;
         delete dz;
-        delete daz;
         delete b;
         delete db;
         delete W;
@@ -71,11 +68,6 @@ public:
         return *dz;
     }
 
-    // reference to ∂a / ∂z
-    mat& dazRef() {
-        return *daz;
-    }
-
     // initialize all params
     void init(const int& batch_size = 1) {
         clearAll();
@@ -83,7 +75,6 @@ public:
         z       = new mat(size_out, batch_size);
         da      = new mat(size_out, batch_size);
         dz      = new mat(size_out, batch_size);
-        daz     = new mat(size_out, batch_size);
         b       = new vec(size_out);
         db      = new vec(size_out);
         W       = new mat(size_out, size_in);
@@ -110,26 +101,25 @@ public:
         z->noalias() = (*W) * data_in;
         z->colwise() += *b;
         activation::f(*a, *z);
-        // compute [∂a / ∂z]
-        activation::diff(*daz, *z, *a);
     }
 
     /** backprop algorithm
     * 
-    * assumptions: current layer's [∂E / ∂a], [∂E / ∂z] have been calculated
+    * assumptions: current layer's [∂E / ∂a] has been calculated
     * to be computed: lower layer's [∂E / ∂a]
+    *                 this layer's [∂E / ∂z]
     *                 this layer's [∂E / ∂W]
     *                 this layer's [∂E / ∂b]
     */
     void backprop(const layer* upper_layer, layer* lower_layer) {
         const double size = a->cols();
+        // compute current layer's [∂E / ∂z]
+        activation::apply_diff(*dz, *da, *z, *a);
         // compute lower layer's [∂E / ∂a]
         lower_layer->daRef().noalias() = W->transpose() * (*dz);
-        // compute lower layer's [∂E / ∂z]
-        lower_layer->dzRef().noalias() = lower_layer->daRef().cwiseProduct(lower_layer->dazRef());
-        // computer current layer's [∂E / ∂W]
+        // compute current layer's [∂E / ∂W]
         dW->noalias() = (*dz) * lower_layer->getData().transpose() / size;
-        // computer current layer's [∂E / ∂b]
+        // compute current layer's [∂E / ∂b]
         db->noalias() = dz->rowwise().mean();
     }
 };

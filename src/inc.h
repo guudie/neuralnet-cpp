@@ -10,6 +10,7 @@
 #include "layer/dense.h"
 #endif
 
-#ifndef ACT_FUNC_H
-#include "act_func.h"
+// include all activations
+#ifndef ACTIVATION_INC_H
+#include "act_func/activation_inc.h"
 #endif

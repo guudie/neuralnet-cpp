@@ -29,9 +29,6 @@ public:
     // reference to ∂E / ∂z
     virtual mat& dzRef() = 0;
 
-    // reference to ∂a / ∂z
-    virtual mat& dazRef() = 0;
-
     // initialize layer;
     virtual void init(const int& batch_size = 1) = 0;
 
@@ -43,8 +40,9 @@ public:
 
     /** backprop algorithm
     * 
-    * assumptions: current layer's [∂E / ∂a], [∂E / ∂z] have been calculated
+    * assumptions: current layer's [∂E / ∂a] has been calculated
     * to be computed: lower layer's [∂E / ∂a]
+    *                 this layer's [∂E / ∂z]
     *                 this layer's [∂E / ∂W]
     *                 this layer's [∂E / ∂b]
     */
