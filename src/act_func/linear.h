@@ -25,7 +25,7 @@ public:
         dz.noalias() = da;
     }
 
-    static string name() {
+    static std::string name() {
         return "Linear";
     }
 };
