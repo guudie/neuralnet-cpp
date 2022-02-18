@@ -114,12 +114,13 @@ public:
         activation::diff(*daz, *z, *a);
     }
 
-    // backprop algorithm
-    //
-    // assumptions: current layer's [∂E / ∂a], [∂E / ∂z] have been calculated
-    // to be computed: lower layer's [∂E / ∂a]
-    //                 this layer's [∂E / ∂W]
-    //                 this layer's [∂E / ∂b]
+    /** backprop algorithm
+    * 
+    * assumptions: current layer's [∂E / ∂a], [∂E / ∂z] have been calculated
+    * to be computed: lower layer's [∂E / ∂a]
+    *                 this layer's [∂E / ∂W]
+    *                 this layer's [∂E / ∂b]
+    */
     void backprop(const layer* upper_layer, layer* lower_layer) {
         const double size = a->cols();
         // compute lower layer's [∂E / ∂a]
