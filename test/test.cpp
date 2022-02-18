@@ -9,7 +9,7 @@ int main() {
     layer* tmp_in = new dense<activation>(3, 1);
     tmp_in->init();
 
-    neuralnet net;
+    neuralnet net(0.0001, 10000, 32);
     net.addLayer(tmp_in);
 
     Eigen::MatrixXd in(3, 2);

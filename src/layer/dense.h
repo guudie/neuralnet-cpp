@@ -57,8 +57,23 @@ public:
     }
 
     // get output data
-    const mat& getData() {
+    const mat& getData() const {
         return *a;
+    }
+
+    // reference to ∂E / ∂a
+    mat& daRef() {
+        return *da;
+    }
+
+    // reference to ∂E / ∂z
+    mat& dzRef() {
+        return *dz;
+    }
+
+    // reference to ∂a / ∂z
+    mat& dazRef() {
+        return *daz;
     }
 
     // initialize all params
@@ -95,6 +110,26 @@ public:
         z->noalias() = (*W) * data_in;
         z->colwise() += *b;
         activation::f(*a, *z);
+        // compute [∂a / ∂z]
+        activation::diff(*daz, *z, *a);
+    }
+
+    // backprop algorithm
+    //
+    // assumptions: current layer's [∂E / ∂a], [∂E / ∂z] have been calculated
+    // to be computed: lower layer's [∂E / ∂a]
+    //                 this layer's [∂E / ∂W]
+    //                 this layer's [∂E / ∂b]
+    void backprop(const layer* upper_layer, layer* lower_layer) {
+        const double size = a->cols();
+        // compute lower layer's [∂E / ∂a]
+        lower_layer->daRef().noalias() = W->transpose() * (*dz);
+        // compute lower layer's [∂E / ∂z]
+        lower_layer->dzRef().noalias() = lower_layer->daRef().cwiseProduct(lower_layer->dazRef());
+        // computer current layer's [∂E / ∂W]
+        dW->noalias() = (*dz) * lower_layer->getData().transpose() / size;
+        // computer current layer's [∂E / ∂b]
+        db->noalias() = dz->rowwise().mean();
     }
 };
 

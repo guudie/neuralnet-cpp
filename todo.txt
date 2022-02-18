@@ -1,8 +1,1 @@
-[ ] implement data shuffling
-[ ] implement some other loss functions
-[ ] implement some other activation functions
-[ ] implement some other optimizers
-[ ] make neural net compatible with all loss functions, all activation functions (especially softmax and sigmoid), and all optimizers
-[✓] partly compatible with optimizers
-
-* note: fastmoid is good with xavier initialization and 0.0005 learning rate + 10000 epochs
+FIX layer.h, dense.h and act_func.h

@@ -42,6 +42,12 @@ public:
         network.push_back(L);
     }
 
+    // random init
+    void randInit() {
+        for(auto l : network)
+            l->randInit(batch_size);
+    }
+
     // feedforward algorithm
     void feedforward(const mat& data_in) {
         network[0]->evaluate(data_in);
