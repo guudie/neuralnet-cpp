@@ -6,6 +6,7 @@
 
 #include "layer.h"
 
+template<typename loss>
 class neuralnet {
 private:
     typedef Eigen::MatrixXd mat;
@@ -49,13 +50,13 @@ public:
     }
 
     // attach training data
-    void attach(const vecContainer& X, const vecContainer y) {
+    void attach(const vecContainer& X, const vecContainer& y) {
         train_in.clear();
         train_out.clear();
         for(auto it : X)
-            train_in.push_back(new vec(it));
+            train_in.push_back(new vec(*it));
         for(auto it : y)
-            train_out.push_back(new vec(it));
+            train_out.push_back(new vec(*it));
     }
 
     // feedforward algorithm
@@ -64,6 +65,19 @@ public:
         for(int l = 1; l < network.size(); l++) {
             network[l]->evaluate(network[l-1]->getData());
         }
+    }
+
+    // backprop algorithm
+    void backprop(const mat& X, const mat& y) {
+        int L = network.size() - 1;
+        // compute ∂E / ∂ȳ
+        loss::diff(network[L]->daRef(), network[L]->getData(), y);
+        // compute gradients from layer L --> 1
+        for(int l = L; l > 0; l--) {
+            network[l]->backprop(network[l-1]->getData(), network[l-1]->daRef());
+        }
+        // compute gradients between layers 0 and input
+        network[0]->backprop(X);
     }
 
     // fitting algorithm
@@ -84,6 +98,11 @@ public:
             it = (it + batch_size) % sz;
 
             feedforward(tmp_in);
+            backprop(tmp_in, tmp_out);
+
+            // update weights accordingly
+            for(auto l : network)
+                l->updateParams(rate);
         }
     }
 };

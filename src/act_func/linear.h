@@ -1,10 +1,6 @@
 #ifndef LINEAR_H
 #define LINEAR_H
 
-#ifndef NEURALNET_H
-#include <eigen3/Eigen/Core>
-#endif
-
 class Linear {
 private:
     typedef Eigen::MatrixXd mat;

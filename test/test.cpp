@@ -5,15 +5,53 @@
 #include <fstream>
 using namespace std;
 
-int main() {
-    neuralnet net(0.0001, 10000, 2);
-    net.addLayer(new dense<Linear>(3, 1));
+typedef Eigen::VectorXd vec;
+typedef std::vector<vec*> vecContainer;
 
-    Eigen::MatrixXd in(3, 2);
-    in <<   1, 4,
-            2, 5,
-            3, 6;
+void fetchData(string dir, vecContainer& X, vecContainer& y, int& ins, int& outs) {
+    fstream fin(dir, ios::in);
+    int n;
+    fin >> n >> ins >> outs;
+    for(int i = 0; i < n; i++) {
+        double get;
+        vec* tmp_i = new vec(ins);
+        vec* tmp_o = new vec(outs);
+        for(int j = 0; j < ins; j++) {
+            fin >> get;
+            tmp_i->coeffRef(j) = get;
+        }
+        for(int j = 0; j < outs; j++) {
+            fin >> get;
+            tmp_o->coeffRef(j) = get;
+        }
+        X.push_back(tmp_i);
+        y.push_back(tmp_o);
+    }
+}
+
+
+int main() {
+    vecContainer X;
+    vecContainer y;
+    int ins, outs;
+    fetchData("../dump/dataset.txt", X, y, ins, outs);
+    // cout << ins << " " << outs;
+
+    neuralnet<SSE> net(0.0001, 10000, 32);
+    net.addLayer(new dense<Linear>(ins, 4));
+    net.addLayer(new dense<Linear>(4, 4));
+    net.addLayer(new dense<Linear>(4, 4));
+    net.addLayer(new dense<Linear>(4, 4));
+    net.addLayer(new dense<Linear>(4, outs));
     net.randInit();
-    net.feedforward(in);
-    cout << net.getNetwork()[0]->getData();
+    net.attach(X, y);
+    // debug("yea");
+    net.fit();
+    // debug("yea");
+
+    vec test(1);
+    test << 10;
+
+    net.feedforward(test);
+    cout << net.getNetwork()[4]->getData();
 }

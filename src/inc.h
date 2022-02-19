@@ -14,3 +14,8 @@
 #ifndef ACTIVATION_INC_H
 #include "act_func/activation_inc.h"
 #endif
+
+// include all loss functions
+#ifndef LOSS_INC_H
+#include "loss/loss_inc.h"
+#endif

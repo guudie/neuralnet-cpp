@@ -127,6 +127,12 @@ public:
         // compute current layer's [∂E / ∂b]
         db->noalias() = dz->rowwise().mean();
     }
+
+    // update the params
+    void updateParams(const double& rate) {
+        W->noalias() -= (*dW) * rate;
+        b->noalias() -= (*db) * rate;
+    }
 };
 
 #endif

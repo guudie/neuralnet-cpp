@@ -45,6 +45,9 @@ public:
     */
     virtual void backprop(const mat& lower_a, mat& lower_da) = 0;
     virtual void backprop(const mat& lower_a) = 0;  // same as above, but for the first hidden layer
+
+    // update the parameters according to gradients
+    virtual void updateParams(const double& rate) = 0;
 };
 
 #endif
