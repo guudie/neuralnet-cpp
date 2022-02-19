@@ -14,5 +14,6 @@ using namespace std::chrono;
 
 // defines
 #define DEBUG(msg) std::cout<<msg
+#define debug(msg) DEBUG(msg)
 
 #endif

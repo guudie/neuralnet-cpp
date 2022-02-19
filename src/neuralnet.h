@@ -48,11 +48,42 @@ public:
             l->randInit(batch_size);
     }
 
+    // attach training data
+    void attach(const vecContainer& X, const vecContainer y) {
+        train_in.clear();
+        train_out.clear();
+        for(auto it : X)
+            train_in.push_back(new vec(it));
+        for(auto it : y)
+            train_out.push_back(new vec(it));
+    }
+
     // feedforward algorithm
     void feedforward(const mat& data_in) {
         network[0]->evaluate(data_in);
         for(int l = 1; l < network.size(); l++) {
             network[l]->evaluate(network[l-1]->getData());
+        }
+    }
+
+    // fitting algorithm
+    void fit() {
+        if(network.size() < 1 || batch_size < 1)
+            return;
+        
+        mat tmp_in(train_in[0]->size(), batch_size);
+        mat tmp_out(train_out[0]->size(), batch_size);
+        int sz = train_in.size();
+        int it = 0;
+        for(int _ = 0; _ < steps; _++) {
+            // attach #batch_size training observations to tmp
+            for(int i = 0; i < batch_size; i++) {
+                tmp_in.col(i) = *train_in[(i+it)%sz];
+                tmp_out.col(i) = *train_out[(i+it)%sz];
+            }
+            it = (it + batch_size) % sz;
+
+            feedforward(tmp_in);
         }
     }
 };

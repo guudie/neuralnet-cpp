@@ -63,11 +63,6 @@ public:
         return *da;
     }
 
-    // reference to ∂E / ∂z
-    mat& dzRef() {
-        return *dz;
-    }
-
     // initialize all params
     void init(const int& batch_size = 1) {
         clearAll();
@@ -111,14 +106,24 @@ public:
     *                 this layer's [∂E / ∂W]
     *                 this layer's [∂E / ∂b]
     */
-    void backprop(const layer* upper_layer, layer* lower_layer) {
+    void backprop(const mat& lower_a, mat& lower_da) {
         const double size = a->cols();
         // compute current layer's [∂E / ∂z]
         activation::apply_diff(*dz, *da, *z, *a);
         // compute lower layer's [∂E / ∂a]
-        lower_layer->daRef().noalias() = W->transpose() * (*dz);
+        lower_da.noalias() = W->transpose() * (*dz);
         // compute current layer's [∂E / ∂W]
-        dW->noalias() = (*dz) * lower_layer->getData().transpose() / size;
+        dW->noalias() = (*dz) * lower_a.transpose() / size;
+        // compute current layer's [∂E / ∂b]
+        db->noalias() = dz->rowwise().mean();
+    }
+    // same as above, but for the first hidden layer
+    void backprop(const mat& lower_a) {
+        const double size = a->cols();
+        // compute current layer's [∂E / ∂z]
+        activation::apply_diff(*dz, *da, *z, *a);
+        // compute current layer's [∂E / ∂W]
+        dW->noalias() = (*dz) * lower_a.transpose() / size;
         // compute current layer's [∂E / ∂b]
         db->noalias() = dz->rowwise().mean();
     }

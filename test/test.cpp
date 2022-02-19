@@ -6,17 +6,14 @@
 using namespace std;
 
 int main() {
-    layer* tmp_in = new dense<Linear>(3, 1);
-    tmp_in->init();
-
-    neuralnet net(0.0001, 10000, 32);
-    net.addLayer(tmp_in);
+    neuralnet net(0.0001, 10000, 2);
+    net.addLayer(new dense<Linear>(3, 1));
 
     Eigen::MatrixXd in(3, 2);
     in <<   1, 4,
             2, 5,
             3, 6;
-    
+    net.randInit();
     net.feedforward(in);
     cout << net.getNetwork()[0]->getData();
 }

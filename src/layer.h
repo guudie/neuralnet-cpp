@@ -26,9 +26,6 @@ public:
     // reference to ∂E / ∂a
     virtual mat& daRef() = 0;
 
-    // reference to ∂E / ∂z
-    virtual mat& dzRef() = 0;
-
     // initialize layer;
     virtual void init(const int& batch_size = 1) = 0;
 
@@ -46,7 +43,8 @@ public:
     *                 this layer's [∂E / ∂W]
     *                 this layer's [∂E / ∂b]
     */
-    virtual void backprop(const layer* upper_layer, layer* lower_layer) = 0;
+    virtual void backprop(const mat& lower_a, mat& lower_da) = 0;
+    virtual void backprop(const mat& lower_a) = 0;  // same as above, but for the first hidden layer
 };
 
 #endif
