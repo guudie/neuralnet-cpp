@@ -78,7 +78,7 @@ public:
 
     // random init
     void randInit(const int& batch_size = 1) {
-        init();
+        init(batch_size);
         std::random_device r;
         std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
         std::mt19937 eng(seed);

@@ -9,4 +9,8 @@
 #include "linear.h"
 #endif
 
+#ifndef RELU_H
+#include "relu.h"
+#endif
+
 #endif

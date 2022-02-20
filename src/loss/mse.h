@@ -1,17 +1,18 @@
-#ifndef SSE_H
-#define SSE_H
+#ifndef MSE_H
+#define MSE_H
 
-class SSE {
+class MSE {
 private:
     typedef Eigen::MatrixXd mat;
     typedef Eigen::VectorXd vec;
 public:
-    SSE();
-    ~SSE();
+    MSE();
+    ~MSE();
 
     // compute ∂E / ∂ȳ
     static void diff(mat& dy, const mat& ybar, const mat& y) {
-        dy.noalias() = (ybar - y) * 2.0;
+        double num = 2.0 / y.cols();
+        dy.noalias() = (ybar - y) * num;
     }
 };
 

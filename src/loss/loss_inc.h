@@ -9,4 +9,8 @@
 #include "sse.h"
 #endif
 
+#ifndef MSE_H
+#include "mse.h"
+#endif
+
 #endif

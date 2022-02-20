@@ -6,8 +6,9 @@
 #include "layer.h"
 #endif
 
-#ifndef DENSE_H
-#include "layer/dense.h"
+// include all layer types
+#ifndef LAYER_INC_H
+#include "layer/layer_inc.h"
 #endif
 
 // include all activations
