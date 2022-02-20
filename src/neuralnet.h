@@ -33,9 +33,19 @@ public:
             delete it;
     }
 
-    // return the layers
+    /** \returns a constant reference to the list of layers */
     const std::vector<layer*>& getNetwork() {
         return network;
+    }
+
+    /** \returns the number of layers *//////////////////////////////////
+    int size() {
+        return network.size();
+    }
+
+    /** \returns a constant reference to layer _i *//////////////////////
+    const layer& operator[](const int& _i) {
+        return *network[_i];
     }
 
     // add a layer

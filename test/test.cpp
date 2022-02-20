@@ -29,6 +29,20 @@ void fetchData(string dir, vecContainer& X, vecContainer& y, int& ins, int& outs
     }
 }
 
+template<typename loss>
+void outputMapping(string dir, neuralnet<loss>& net, int ins) {
+    fstream fout(dir, ios::out);
+    fout << 201 << "\n";
+    vec tmp(ins);
+    int L = net.size()-1;
+    for(double i = 0; i < 10.05; i+=0.05) {
+        tmp.coeffRef(0) = i;
+        for(int j = 1; j < ins; j++)
+            tmp.coeffRef(j) = tmp.coeff(j-1) * i;
+        net.feedforward(tmp);
+        fout << i << " " << net[L].getData().transpose() << "\n";
+    }
+}
 
 int main() {
     vecContainer X;
@@ -45,13 +59,20 @@ int main() {
     net.addLayer(new dense<Linear>(4, outs));
     net.randInit();
     net.attach(X, y);
-    // debug("yea");
+    
+#ifdef DEBUGGING
+    auto start = high_resolution_clock::now();
+#endif
+
     net.fit();
-    // debug("yea");
+    
+#ifdef DEBUGGING
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+    debug("Execution time: ");
+    debug(duration.count());
+    debug(" ms\n");
+#endif
 
-    vec test(1);
-    test << 10;
-
-    net.feedforward(test);
-    cout << net.getNetwork()[4]->getData();
+    outputMapping("../dump/x_to_y.txt", net, ins);
 }
