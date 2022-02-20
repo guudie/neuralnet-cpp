@@ -4,5 +4,6 @@
 #include "sgd.h"
 #include "msgd.h"
 #include "adagrad.h"
+#include "adadelta.h"
 
 #endif
