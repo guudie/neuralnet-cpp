@@ -51,7 +51,10 @@ int main() {
     fetchData("../dump/dataset.txt", X, y, ins, outs);
     // cout << ins << " " << outs;
 
-    neuralnet<SSE> net(0.0001, 10000, 32);
+    neuralnet<SSE> net(5000, 32);                   // test_steps, batch_size
+    // optimizer* opt = new SGD(0.0001);               // learning rate
+    // optimizer* opt = new MSGD(0.00005, 0.9);        // learning rate, gamma
+    optimizer* opt = new AdaGrad(0.1);               //
     net.addLayer(new dense<Linear>(ins, 4));
     net.addLayer(new dense<Linear>(4, 4));
     net.addLayer(new dense<Linear>(4, 4));
@@ -64,7 +67,7 @@ int main() {
     auto start = high_resolution_clock::now();
 #endif
 
-    net.fit();
+    net.fit(opt);
     
 #ifdef DEBUGGING
     auto stop = high_resolution_clock::now();

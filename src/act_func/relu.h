@@ -1,6 +1,8 @@
 #ifndef RELU_H
 #define RELU_H
 
+#include <eigen3/Eigen/Core>
+
 class ReLU {
 private:
     typedef Eigen::MatrixXd mat;

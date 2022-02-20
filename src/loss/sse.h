@@ -1,6 +1,8 @@
 #ifndef SSE_H
 #define SSE_H
 
+#include <eigen3/Eigen/Core>
+
 class SSE {
 private:
     typedef Eigen::MatrixXd mat;

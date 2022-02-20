@@ -1,12 +1,10 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#ifndef NEURALNET_H
 #include <eigen3/Eigen/Core>
-#endif
-
 #include <algorithm>
 #include <random>
+#include "optimizers.h"
 
 class layer {
 protected:
@@ -47,7 +45,8 @@ public:
     virtual void backprop(const mat& lower_a) = 0;  // same as above, but for the first hidden layer
 
     // update the parameters according to gradients
-    virtual void updateParams(const double& rate) = 0;
+    // virtual void updateParams(const double& rate) = 0;
+    virtual void updateParams(optimizer*& opt) = 0;
 };
 
 #endif

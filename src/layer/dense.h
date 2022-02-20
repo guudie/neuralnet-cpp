@@ -1,9 +1,7 @@
 #ifndef DENSE_H
 #define DENSE_H
 
-#ifndef LAYER_H
 #include "../layer.h"
-#endif
 
 // defining dense layer, fully connected to all neurons from previous layer
 
@@ -129,9 +127,9 @@ public:
     }
 
     // update the params
-    void updateParams(const double& rate) {
-        W->noalias() -= (*dW) * rate;
-        b->noalias() -= (*db) * rate;
+    void updateParams(optimizer*& opt) {
+        opt->update(*dW, *W);
+        opt->update(*db, *b);
     }
 };
 

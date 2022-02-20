@@ -1,6 +1,8 @@
 #ifndef LINEAR_H
 #define LINEAR_H
 
+#include <eigen3/Eigen/Core>
+
 class Linear {
 private:
     typedef Eigen::MatrixXd mat;

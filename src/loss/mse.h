@@ -1,6 +1,8 @@
 #ifndef MSE_H
 #define MSE_H
 
+#include <eigen3/Eigen/Core>
+
 class MSE {
 private:
     typedef Eigen::MatrixXd mat;

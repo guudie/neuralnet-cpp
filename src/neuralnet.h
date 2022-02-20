@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "layer.h"
+#include "optimizers.h"
 
 template<typename loss>
 class neuralnet {
@@ -18,12 +19,12 @@ private:
     vecContainer train_in;
     vecContainer train_out;
 
-    const double rate;
+    // const double rate;
     const int steps;
     const int batch_size;
 
 public:
-    neuralnet(const double& r = 0.01, const int& s = 1000, const int& bs = 32) : rate(r), steps(s), batch_size(bs) {}
+    neuralnet(const int& s = 1000, const int& bs = 32) : steps(s), batch_size(bs) {}
     ~neuralnet() {
         for(auto it : network)
             delete it;
@@ -91,7 +92,7 @@ public:
     }
 
     // fitting algorithm
-    void fit() {
+    void fit(optimizer*& opt) {
         if(network.size() < 1 || batch_size < 1)
             return;
         
@@ -112,7 +113,7 @@ public:
 
             // update weights accordingly
             for(auto l : network)
-                l->updateParams(rate);
+                l->updateParams(opt);
         }
     }
 };
