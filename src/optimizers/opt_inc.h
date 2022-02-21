@@ -5,5 +5,6 @@
 #include "msgd.h"
 #include "adagrad.h"
 #include "adadelta.h"
+#include "adam.h"
 
 #endif

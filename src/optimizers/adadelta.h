@@ -5,6 +5,7 @@
 
 #include "../optimizers.h"
 
+// adadelta
 class AdaDelta : public optimizer {
 private:
     typedef Eigen::MatrixXd mat;
@@ -16,7 +17,7 @@ private:
     const double gamma;
 
 public:
-    AdaDelta(const double& r, const double& g) : optimizer(r), gamma(g) {}
+    AdaDelta(const double& r, const double& g = 0.9) : optimizer(r), gamma(g) {}
     ~AdaDelta() {}
 
     // update the weights

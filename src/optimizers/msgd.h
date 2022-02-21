@@ -15,7 +15,7 @@ private:
     const double gamma;
 
 public:
-    MSGD(const double& r, const double& g) : optimizer(r), gamma(g) {}
+    MSGD(const double& r, const double& g = 0.9) : optimizer(r), gamma(g) {}
     ~MSGD() {}
 
     // update the weights

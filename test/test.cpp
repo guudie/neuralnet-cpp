@@ -51,11 +51,12 @@ int main() {
     fetchData("../dump/dataset.txt", X, y, ins, outs);
     // cout << ins << " " << outs;
 
-    neuralnet<SSE> net(500, 32);
+    neuralnet<SSE> net(300, 32);
     // optimizer* opt = new SGD(0.0001);
     // optimizer* opt = new MSGD(0.00005, 0.9);
     // optimizer* opt = new AdaGrad(0.1);
-    optimizer* opt = new AdaDelta(0.01, 0.9);
+    // optimizer* opt = new AdaDelta(0.01, 0.9);
+    optimizer* opt = new Adam(0.1);
     net.addLayer(new dense<Linear>(ins, 4));
     net.addLayer(new dense<Linear>(4, 4));
     net.addLayer(new dense<Linear>(4, 4));
