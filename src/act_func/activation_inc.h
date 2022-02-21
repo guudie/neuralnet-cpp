@@ -3,5 +3,7 @@
 
 #include "linear.h"
 #include "relu.h"
+#include "sigmoid.h"
+#include "fastmoid.h"
 
 #endif

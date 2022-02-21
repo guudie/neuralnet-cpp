@@ -20,8 +20,8 @@ public:
     // calculate [∂E / ∂z] = [∂E / ∂a] * σ'(z) and store it
     static void apply_diff(mat& dz, const mat& da, const mat& z, const mat& a) {
         // relu: [∂E / ∂z] = [∂E / ∂a] * σ'(z)
-        // σ'(z) = (bool) z >= 0
-        dz.noalias() = (z.array() >= 0).select(da, 0);
+        // σ'(z) = (bool) z > 0
+        dz.noalias() = (z.array() > 0).select(da, 0);
     }
 
     static std::string name() {
