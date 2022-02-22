@@ -60,7 +60,6 @@ int main() {
     net.addLayer(new dense<Linear>(ins, 4));
     net.addLayer(new dense<Linear>(4, 4));
     net.addLayer(new dense<Linear>(4, 4));
-    net.addLayer(new dense<Linear>(4, 4));
     net.addLayer(new dense<Linear>(4, outs));
     net.randInit();
     net.attach(X, y);
