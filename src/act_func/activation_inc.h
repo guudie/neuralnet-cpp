@@ -5,5 +5,6 @@
 #include "relu.h"
 #include "sigmoid.h"
 #include "fastmoid.h"
+#include "tanh.h"
 
 #endif

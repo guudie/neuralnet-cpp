@@ -19,7 +19,7 @@ public:
 
     // calculate [∂E / ∂z] = [∂E / ∂a] * σ'(z) and store it
     static void apply_diff(mat& dz, const mat& da, const mat& z, const mat& a) {
-        // fastmoid: [∂E / ∂z] = [∂E / ∂a] * σ'(z) = [∂E / ∂a] * (0.5/(|z| + 1)^2)
+        // fastmoid: [∂E / ∂z] = [∂E / ∂a] * σ'(z) = [∂E / ∂a] * 0.5/(|z| + 1)²
         dz.array() = da.array() * (z.cwiseAbs().array() + 1).cwiseAbs2().cwiseInverse() / 2;
     }
 
