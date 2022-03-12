@@ -3,9 +3,9 @@
 
 #include "../layer.h"
 
-// defining dense layer, fully connected to all neurons from previous layer
+/* defining dense layer, fully connected to all neurons from previous layer
 
-// the terms are matrices, each column is an input, rows represent the neurons
+   the terms are matrices, each column is an input, rows represent the neurons */
 
 template<typename activation>
 class dense : public layer {
