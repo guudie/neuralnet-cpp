@@ -1,8 +1,14 @@
-.PHONY: all
 all: test
-test: test.cpp
-	g++ -O2 -I../src test.cpp -o test
 
-.PHONY: clean 
+test: test.o
+	g++ test.o -o test
+
+test.o: test.cpp
+	g++ test.cpp -I../src/ -c -O2 -o test.o 
+
 clean:
-	rm -f test
+	rm test test.o
+
+force:
+	g++ test.cpp -I../src/ -c -O2 -o test.o
+	g++ test.o -o test
