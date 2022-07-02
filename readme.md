@@ -1,7 +1,7 @@
 ## About
 This is a C++ implementation of the gradient descent algorithm, written from scratch with the Eigen library for linear algebraic calculations
 
-`main` branch has all the minimum components to implement a simple fully connected network. It is, however, no longer in development. The workflow has been moved to `alt`
+`main` branch has all the minimum components to implement a simple fully connected network. It is, however, no longer in development. The workflow has been moved to `alternative`
 
 ## Features
 Currently, the network only supports fully-connected type of layers; more types of layers is expected to be added in the future.
