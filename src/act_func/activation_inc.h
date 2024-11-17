@@ -6,5 +6,6 @@
 #include "sigmoid.h"
 #include "fastmoid.h"
 #include "tanh.h"
+#include "param_relu.h"
 
 #endif

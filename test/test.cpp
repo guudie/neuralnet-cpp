@@ -58,9 +58,10 @@ int main() {
     // optimizer* opt = new AdaDelta(0.01, 0.9);
     optimizer* opt = new Adam(0.1);
     net.addLayer(new dense<Linear>(ins, 4));
-    net.addLayer(new dense<Linear>(4, 4));
-    net.addLayer(new dense<Linear>(4, 4));
-    net.addLayer(new dense<Linear>(4, outs));
+    net.addLayer(new dense<ParamReLU>(4, 8));
+    net.addLayer(new dense<ParamReLU>(8, 16));
+    net.addLayer(new dense<ParamReLU>(16, 32));
+    net.addLayer(new dense<Linear>(32, outs));
     net.randInit();
     net.attach(X, y);
     

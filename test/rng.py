@@ -24,20 +24,20 @@ y1 = np.add(y1, np.multiply(np.random.rand(n), 2))
 y2 = np.add(y2, np.multiply(np.random.rand(n), 2))
 
 fout = open("../dump/dataset.txt", "w")
-pd.set_option('display.float_format', lambda x: '%.10f' % x)
+pd.set_option("display.float_format", lambda x: "%.10f" % x)
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 data = pd.DataFrame()
 data["x"] = x
-data["x2"] = x2
+# data["x2"] = x2
 # data["x3"] = x3
 # data["x4"] = x4
 data["y1"] = y1
 data["y2"] = y2
 print(n, file=fout)
-print(2, 2, file=fout)
+print(1, 2, file=fout)
 print(data.to_string(index=False, header=False), file=fout)
 
 
 tout = open("../dump/training_data.txt", "w")
 print(n, file=tout)
-print(data.drop('x2', axis=1).to_string(index=False, header=False), file=tout)
+print(data.to_string(index=False, header=False), file=tout)
