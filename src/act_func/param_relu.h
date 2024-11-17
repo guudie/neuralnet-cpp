@@ -9,7 +9,7 @@ private:
     typedef Eigen::VectorXd vec;
 
     static constexpr double c = 0.25;
-    static constexpr double absCoeff = 1 - c/2 - 0.5;
+    static constexpr double absCoeff = -c/2 + 0.5;
     static constexpr double regCoeff = -c/2 - 0.5;
 
 public:
