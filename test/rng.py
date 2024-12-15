@@ -15,13 +15,15 @@ x4 = np.multiply(x3, x)
 # for i in range(len(x)):
 #     y.append(15 * x3[i] + random.uniform(-5, 5))
 # y = np.add(np.multiply(np.sin(x), 2), 4)
-y1 = np.add(np.multiply(np.add(x, -5), np.add(x, -5)), 5)
+# y1 = np.add(np.multiply(np.add(x, -5), np.add(x, -5)), 5)
+y1 = np.multiply(np.cos(np.multiply(x, np.pi)), 4)
 # y2 = np.multiply(np.add(np.multiply(np.add(x, -5), np.add(x, -5)), -5), -1)
-y2 = np.add(np.multiply(x, 2), -3)
+# y2 = np.add(np.multiply(x, 2), -3)
+y2 = np.multiply(np.sin(np.multiply(x, np.pi / 4)), 4)
 
 # add some noise to data
-y1 = np.add(y1, np.multiply(np.random.rand(n), 2))
-y2 = np.add(y2, np.multiply(np.random.rand(n), 2))
+y1 = np.add(y1, np.multiply(np.random.rand(n), 1))
+y2 = np.add(y2, np.multiply(np.random.rand(n), 1))
 
 fout = open("../dump/dataset.txt", "w")
 pd.set_option("display.float_format", lambda x: "%.10f" % x)

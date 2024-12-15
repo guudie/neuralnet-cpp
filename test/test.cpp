@@ -32,10 +32,10 @@ void fetchData(string dir, vecContainer& X, vecContainer& y, int& ins, int& outs
 template<typename loss>
 void outputMapping(string dir, neuralnet<loss>& net, int ins) {
     fstream fout(dir, ios::out);
-    fout << 201 << "\n";
+    fout << 401 << "\n";
     vec tmp(ins);
     int L = net.size()-1;
-    for(double i = 0; i < 10.05; i+=0.05) {
+    for(double i = -5; i < 15.05; i+=0.05) {
         tmp.coeffRef(0) = i;
         for(int j = 1; j < ins; j++)
             tmp.coeffRef(j) = tmp.coeff(j-1) * i;
@@ -51,17 +51,20 @@ int main() {
     fetchData("../dump/dataset.txt", X, y, ins, outs);
     // cout << ins << " " << outs;
 
-    neuralnet<SSE> net(300, 32);
+    neuralnet<SSE> net(1000, 32);
     // optimizer* opt = new SGD(0.0001);
     // optimizer* opt = new MSGD(0.00005, 0.9);
     // optimizer* opt = new AdaGrad(0.1);
     // optimizer* opt = new AdaDelta(0.01, 0.9);
-    optimizer* opt = new Adam(0.1);
-    net.addLayer(new dense<Linear>(ins, 4));
-    net.addLayer(new dense<ParamReLU>(4, 8));
-    net.addLayer(new dense<ParamReLU>(8, 16));
-    net.addLayer(new dense<ParamReLU>(16, 32));
-    net.addLayer(new dense<Linear>(32, outs));
+    optimizer* opt = new Adam(0.01);
+    net.addLayer(new dense<PReLU>(ins, 4));
+    net.addLayer(new dense<PReLU>(4, 8));
+    net.addLayer(new dense<PReLU>(8, 16));
+    net.addLayer(new dense<PReLU>(16, 32));
+    net.addLayer(new dense<PReLU>(32, 32));
+    net.addLayer(new dense<PReLU>(32, 64));
+    net.addLayer(new dense<PReLU>(64, 32));
+    net.addLayer(new dense<PReLU>(32, outs));
     net.randInit();
     net.attach(X, y);
     

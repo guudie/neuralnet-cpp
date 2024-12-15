@@ -3,7 +3,7 @@
 
 #include <eigen3/Eigen/Core>
 
-class ParamReLU {
+class PReLU {
 private:
     typedef Eigen::MatrixXd mat;
     typedef Eigen::VectorXd vec;
@@ -13,8 +13,8 @@ private:
     static constexpr double regCoeff = -c/2 - 0.5;
 
 public:
-    ParamReLU();
-    virtual ~ParamReLU();
+    PReLU();
+    virtual ~PReLU();
 
     // parametric relu activation function σ(z) = z if z > 0; cx otherwise
     static void f(mat& a, const mat& z) {
@@ -29,7 +29,7 @@ public:
     }
 
     static std::string name() {
-        return "ParamReLU";
+        return "PReLU";
     }
 };
 
